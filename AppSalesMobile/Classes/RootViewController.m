@@ -317,8 +317,8 @@
 			[dayData writeToFile:zipFile atomically:YES];
 			gzFile file = gzopen([zipFile UTF8String], "rb");
 			FILE *dest = fopen([textFile UTF8String], "w");
-			unsigned char buffer[16384];
-			int uncompressedLength = gzread(file, buffer, 16384);
+			unsigned char buffer[262144];
+			int uncompressedLength = gzread(file, buffer, 262144);
 			if(fwrite(buffer, 1, uncompressedLength, dest) != uncompressedLength || ferror(dest)) {
 				NSLog(@"error writing data");
 			}
