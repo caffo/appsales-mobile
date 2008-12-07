@@ -1,10 +1,32 @@
-//
-//  Day.m
-//  AppSalesMobile
-//
-//  Created by Ole Zorn on 30.10.08.
-//  Copyright 2008 omz:software. All rights reserved.
-//
+/*
+ Day.m
+ AppSalesMobile
+ 
+ * Copyright (c) 2008, omz:software
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of the <organization> nor the
+ *       names of its contributors may be used to endorse or promote products
+ *       derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY omz:software ''AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL <copyright holder> BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 #import "Day.h"
 #import "Country.h"
@@ -96,7 +118,6 @@
 	[coder encodeObject:self.name forKey:@"name"];
 }
 
-
 - (Country *)countryNamed:(NSString *)countryName
 {
 	Country *country = [self.countries objectForKey:countryName];
@@ -110,12 +131,12 @@
 - (void)setDateString:(NSString *)dateString
 {
 	int year, month, day;
-	if ([dateString rangeOfString:@"/"].location == NSNotFound) {
+	if ([dateString rangeOfString:@"/"].location == NSNotFound) { //old date format
 		year = [[dateString substringWithRange:NSMakeRange(0,4)] intValue];
 		month = [[dateString substringWithRange:NSMakeRange(4,2)] intValue];
 		day = [[dateString substringWithRange:NSMakeRange(6,2)] intValue];
 	}
-	else {
+	else { //new date format
 		year = [[dateString substringWithRange:NSMakeRange(6,4)] intValue];
 		month = [[dateString substringWithRange:NSMakeRange(0,2)] intValue];
 		day = [[dateString substringWithRange:NSMakeRange(3,2)] intValue];
@@ -213,7 +234,7 @@
 	if (!self.cachedWeekDayColor) {
 		NSDateComponents *components = [[NSCalendar currentCalendar] components:NSWeekdayCalendarUnit fromDate:self.date];
 		int weekday = [components weekday];
-		if (weekday == 1)
+		if (weekday == 1) //show sundays in red
 			self.cachedWeekDayColor = [UIColor colorWithRed:0.8 green:0.0 blue:0.0 alpha:1.0];
 		else
 			self.cachedWeekDayColor = [UIColor blackColor];
@@ -223,6 +244,7 @@
 
 - (NSString *)weekEndDateString
 {
+	//The Day class is also used to represent weeks. This returns a formatted date of the day the week ends (7 days after date)
 	if (!self.cachedWeekEndDateString) {
 		NSDateComponents *comp = [[[NSDateComponents alloc] init] autorelease];
 		[comp setHour:167];
@@ -240,7 +262,7 @@
 {
 	NSSortDescriptor *sorter = [[[NSSortDescriptor alloc] initWithKey:@"totalRevenueInBaseCurrency" ascending:NO] autorelease];
 	NSArray *sortedChildren = [[self.countries allValues] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sorter]];
-	return sortedChildren;	
+	return sortedChildren;
 }
 
 - (NSString *)proposedFilename

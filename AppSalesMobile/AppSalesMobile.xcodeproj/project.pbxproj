@@ -725,10 +725,10 @@
 			children = (
 				7FB3919C0EE7992F00AC30D5 /* Reachability.h */,
 				7FB3919D0EE7992F00AC30D5 /* Reachability.m */,
-				7FB0C4A90EB99D01005E2C45 /* CurrencyManager.h */,
-				7FB0C4AA0EB99D01005E2C45 /* CurrencyManager.m */,
 				7FB0C4400EB97BC1005E2C45 /* NSDictionary+HTTP.h */,
 				7FB0C4410EB97BC1005E2C45 /* NSDictionary+HTTP.m */,
+				7FB0C4A90EB99D01005E2C45 /* CurrencyManager.h */,
+				7FB0C4AA0EB99D01005E2C45 /* CurrencyManager.m */,
 				1D3623240D0F684500981E51 /* AppSalesMobileAppDelegate.h */,
 				1D3623250D0F684500981E51 /* AppSalesMobileAppDelegate.m */,
 				7F87BC950ED9B510001C8BC8 /* PasswordKeeper.h */,

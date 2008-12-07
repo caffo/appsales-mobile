@@ -1,11 +1,3 @@
-//
-//  PasswordKeeper.h
-//  AppSalesMobile
-//
-//  Created by Ole Zorn on 23.11.08.
-//  Copyright 2008 omz:software. All rights reserved.
-//
-
 #import <UIKit/UIKit.h>
 #import <Security/Security.h>
 

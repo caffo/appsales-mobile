@@ -1,10 +1,32 @@
-//
-//  RootViewController.m
-//  AppSalesMobile
-//
-//  Created by Ole Zorn on 30.10.08.
-//  Copyright omz:software 2008. All rights reserved.
-//
+/*
+RootViewController.m
+AppSalesMobile
+
+* Copyright (c) 2008, omz:software
+* All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*     * Redistributions of source code must retain the above copyright
+*       notice, this list of conditions and the following disclaimer.
+*     * Redistributions in binary form must reproduce the above copyright
+*       notice, this list of conditions and the following disclaimer in the
+*       documentation and/or other materials provided with the distribution.
+*     * Neither the name of the <organization> nor the
+*       names of its contributors may be used to endorse or promote products
+*       derived from this software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY omz:software ''AS IS'' AND ANY
+* EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL <copyright holder> BE LIABLE FOR ANY
+* DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+* (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+* LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+* ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+* (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+* SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
 #import <zlib.h>
 #import "RootViewController.h"
@@ -54,9 +76,17 @@
 	return self;
 }
 
+- (void)dealloc 
+{
+	self.days = nil;
+	self.weeks = nil;
+	
+    [super dealloc];
+}
+
 - (void)saveData
 {
-	//new method, save all days/weeks in separate files:
+	//save all days/weeks in separate files:
 	for (Day *d in [self.days allValues]) {
 		NSString *fullPath = [[self docPath] stringByAppendingPathComponent:[d proposedFilename]];
 		//wasLoadedFromDisk is set to YES in initWithCoder: ...
@@ -102,6 +132,81 @@
 	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://icondrawer.com"]];
 }
 
+- (void)deleteDay:(Day *)dayToDelete
+{
+	NSString *fullPath = [[self docPath] stringByAppendingPathComponent:[dayToDelete proposedFilename]];
+	[[NSFileManager defaultManager] removeItemAtPath:fullPath error:NULL];
+	if (dayToDelete.isWeek) {
+		[self.weeks removeObjectForKey:dayToDelete.name];
+		[self refreshWeekList];
+	}
+	else {
+		[self.days removeObjectForKey:dayToDelete.name];
+		[self refreshDayList];
+	}
+}
+
+- (void)refreshDayList
+{
+	float max = 0.1;
+	for (Day *d in [days allValues]) {
+		float r = [d totalRevenueInBaseCurrency];
+		if (r > max)
+			max = r;
+	}
+	daysController.maxRevenue = max;
+	
+	NSMutableArray *daysByMonth = [NSMutableArray array];
+	NSSortDescriptor *dateSorter = [[[NSSortDescriptor alloc] initWithKey:@"date" ascending:NO] autorelease];
+	NSArray *sortedDays = [[days allValues] sortedArrayUsingDescriptors:[NSArray arrayWithObject:dateSorter]];
+	int lastMonth = -1;
+	for (Day *d in sortedDays) {
+		NSDate *date = d.date;
+		NSDateComponents *components = [[NSCalendar currentCalendar] components:NSMonthCalendarUnit fromDate:date];
+		int month = [components month];
+		if (month != lastMonth) {
+			[daysByMonth addObject:[NSMutableArray array]];
+			lastMonth = month;
+		}
+		[[daysByMonth lastObject] addObject:d];
+	}
+	daysController.daysByMonth = daysByMonth;
+	[daysController reload];
+	
+	[tableView reloadData];
+}
+
+- (void)refreshWeekList
+{
+	float max = 0.1;
+	for (Day *w in [weeks allValues]) {
+		float r = [w totalRevenueInBaseCurrency];
+		if (r > max)
+			max = r;
+	}
+	weeksController.maxRevenue = max;
+	
+	NSMutableArray *daysByMonth = [NSMutableArray array];
+	NSSortDescriptor *dateSorter = [[[NSSortDescriptor alloc] initWithKey:@"date" ascending:NO] autorelease];
+	NSArray *sortedDays = [[weeks allValues] sortedArrayUsingDescriptors:[NSArray arrayWithObject:dateSorter]];
+	int lastMonth = -1;
+	for (Day *d in sortedDays) {
+		NSDate *date = d.date;
+		NSDateComponents *components = [[NSCalendar currentCalendar] components:NSMonthCalendarUnit fromDate:date];
+		int month = [components month];
+		if (month != lastMonth) {
+			[daysByMonth addObject:[NSMutableArray array]];
+			lastMonth = month;
+		}
+		[[daysByMonth lastObject] addObject:d];
+	}
+	weeksController.daysByMonth = daysByMonth;
+	[weeksController reload];
+	
+	[tableView reloadData];
+}
+
+#pragma mark Download
 - (void)downloadFailed
 {
 	isRefreshing = NO;
@@ -112,16 +217,12 @@
 
 - (void)successfullyDownloadedDays:(NSDictionary *)newDays
 {
-	if ([newDays count] > 0)
-		changeDone = YES;
 	[days addEntriesFromDictionary:newDays];
 	[self refreshDayList];
 }
 
 - (void)successfullyDownloadedWeeks:(NSDictionary *)newDays
 {
-	if ([newDays count] > 0)
-		changeDone = YES;
 	isRefreshing = NO;
 	[self setProgress:[NSNumber numberWithFloat:1.0]];
 	[weeks addEntriesFromDictionary:newDays];
@@ -213,12 +314,12 @@
 		NSString *downloadActionName;
 		if (i==0) {
 			downloadType = @"Daily";
-			downloadActionName = @"9.11.1"; //daily
+			downloadActionName = @"9.11.1";
 			//NSLog(@"Downloading days...");
 		}
 		else {
 			downloadType = @"Weekly";
-			downloadActionName = @"9.13.1"; //weekly
+			downloadActionName = @"9.13.1";
 			//NSLog(@"Downloading weeks...");
 		}
 	
@@ -371,6 +472,7 @@
 	}
 }
 
+#pragma mark Table View methods
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView 
 {
     return 2;
@@ -471,80 +573,6 @@
     return cell;
 }
 
-- (void)deleteDay:(Day *)dayToDelete
-{
-	NSString *fullPath = [[self docPath] stringByAppendingPathComponent:[dayToDelete proposedFilename]];
-	[[NSFileManager defaultManager] removeItemAtPath:fullPath error:NULL];
-	if (dayToDelete.isWeek) {
-		[self.weeks removeObjectForKey:dayToDelete.name];
-		[self refreshWeekList];
-	}
-	else {
-		[self.days removeObjectForKey:dayToDelete.name];
-		[self refreshDayList];
-	}
-}
-
-- (void)refreshDayList
-{
-	float max = 0.1;
-	for (Day *d in [days allValues]) {
-		float r = [d totalRevenueInBaseCurrency];
-		if (r > max)
-			max = r;
-	}
-	daysController.maxRevenue = max;
-	
-	NSMutableArray *daysByMonth = [NSMutableArray array];
-	NSSortDescriptor *dateSorter = [[[NSSortDescriptor alloc] initWithKey:@"date" ascending:NO] autorelease];
-	NSArray *sortedDays = [[days allValues] sortedArrayUsingDescriptors:[NSArray arrayWithObject:dateSorter]];
-	int lastMonth = -1;
-	for (Day *d in sortedDays) {
-		NSDate *date = d.date;
-		NSDateComponents *components = [[NSCalendar currentCalendar] components:NSMonthCalendarUnit fromDate:date];
-		int month = [components month];
-		if (month != lastMonth) {
-			[daysByMonth addObject:[NSMutableArray array]];
-			lastMonth = month;
-		}
-		[[daysByMonth lastObject] addObject:d];
-	}
-	daysController.daysByMonth = daysByMonth;
-	[daysController reload];
-	
-	[tableView reloadData];
-}
-
-- (void)refreshWeekList
-{
-	float max = 0.1;
-	for (Day *w in [weeks allValues]) {
-		float r = [w totalRevenueInBaseCurrency];
-		if (r > max)
-			max = r;
-	}
-	weeksController.maxRevenue = max;
-	
-	NSMutableArray *daysByMonth = [NSMutableArray array];
-	NSSortDescriptor *dateSorter = [[[NSSortDescriptor alloc] initWithKey:@"date" ascending:NO] autorelease];
-	NSArray *sortedDays = [[weeks allValues] sortedArrayUsingDescriptors:[NSArray arrayWithObject:dateSorter]];
-	int lastMonth = -1;
-	for (Day *d in sortedDays) {
-		NSDate *date = d.date;
-		NSDateComponents *components = [[NSCalendar currentCalendar] components:NSMonthCalendarUnit fromDate:date];
-		int month = [components month];
-		if (month != lastMonth) {
-			[daysByMonth addObject:[NSMutableArray array]];
-			lastMonth = month;
-		}
-		[[daysByMonth lastObject] addObject:d];
-	}
-	weeksController.daysByMonth = daysByMonth;
-	[weeksController reload];
-	
-	[tableView reloadData];
-}
-
 - (void)tableView:(UITableView *)aTableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath 
 {
 	int row = [indexPath row];
@@ -566,13 +594,6 @@
 	}
 	
 	[aTableView deselectRowAtIndexPath:indexPath animated:YES];
-}
-
-- (void)dealloc 
-{
-	self.days = nil;
-	
-    [super dealloc];
 }
 
 
