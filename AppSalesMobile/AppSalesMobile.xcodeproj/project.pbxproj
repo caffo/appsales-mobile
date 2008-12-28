@@ -14,6 +14,7 @@
 		2892E4100DC94CBA00A64D0F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2892E40F0DC94CBA00A64D0F /* CoreGraphics.framework */; };
 		28AD73600D9D9599002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD735F0D9D9599002E5188 /* MainWindow.xib */; };
 		28C286E10D94DF7D0034E888 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C286E00D94DF7D0034E888 /* RootViewController.m */; };
+		34DCF08F0F0461A2009F9929 /* SFHFKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 34DCF08D0F0461A2009F9929 /* SFHFKeychainUtils.m */; };
 		7F1345710EC6D7940050D5F2 /* SettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7F1345700EC6D7940050D5F2 /* SettingsViewController.xib */; };
 		7F1345A10EC6DAE00050D5F2 /* RootViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7F1345A00EC6DAE00050D5F2 /* RootViewController.xib */; };
 		7F17E0570ED4F21E0005D8AF /* CurrencySelectionDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F17E0560ED4F21E0005D8AF /* CurrencySelectionDialog.m */; };
@@ -22,7 +23,6 @@
 		7F81F8910EE245ED00052E7A /* Product.png in Resources */ = {isa = PBXBuildFile; fileRef = 7F81F8900EE245ED00052E7A /* Product.png */; };
 		7F81F89D0EE2481100052E7A /* th.png in Resources */ = {isa = PBXBuildFile; fileRef = 7F81F89C0EE2481100052E7A /* th.png */; };
 		7F81F8AE0EE2557D00052E7A /* ProductCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F81F8AD0EE2557D00052E7A /* ProductCell.m */; };
-		7F87BC970ED9B510001C8BC8 /* PasswordKeeper.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F87BC960ED9B510001C8BC8 /* PasswordKeeper.m */; };
 		7F87BC9C0ED9B588001C8BC8 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F87BC9B0ED9B588001C8BC8 /* Security.framework */; };
 		7F9AEDE00EC64DE700D5C88D /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 7F9AEDDF0EC64DE700D5C88D /* Icon.png */; };
 		7FA7ECC20EE437C400C1954E /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7FA7ECC10EE437C400C1954E /* Localizable.strings */; };
@@ -283,6 +283,8 @@
 		28C286DF0D94DF7D0034E888 /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
 		28C286E00D94DF7D0034E888 /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		34DCF08D0F0461A2009F9929 /* SFHFKeychainUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFHFKeychainUtils.m; sourceTree = "<group>"; };
+		34DCF08E0F0461A2009F9929 /* SFHFKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFHFKeychainUtils.h; sourceTree = "<group>"; };
 		7F1345720EC6D7990050D5F2 /* German */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = German; path = German.lproj/SettingsViewController.xib; sourceTree = "<group>"; };
 		7F1345A20EC6DAE50050D5F2 /* German */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = German; path = German.lproj/RootViewController.xib; sourceTree = "<group>"; };
 		7F17E0550ED4F21E0005D8AF /* CurrencySelectionDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CurrencySelectionDialog.h; sourceTree = "<group>"; };
@@ -294,8 +296,6 @@
 		7F81F89C0EE2481100052E7A /* th.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = th.png; sourceTree = "<group>"; };
 		7F81F8AC0EE2557D00052E7A /* ProductCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductCell.h; sourceTree = "<group>"; };
 		7F81F8AD0EE2557D00052E7A /* ProductCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductCell.m; sourceTree = "<group>"; };
-		7F87BC950ED9B510001C8BC8 /* PasswordKeeper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasswordKeeper.h; sourceTree = "<group>"; };
-		7F87BC960ED9B510001C8BC8 /* PasswordKeeper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PasswordKeeper.m; sourceTree = "<group>"; };
 		7F87BC9B0ED9B588001C8BC8 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		7F9AEDDF0EC64DE700D5C88D /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		7FA7ECBF0EE437BF00C1954E /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -731,8 +731,8 @@
 				7FB0C4AA0EB99D01005E2C45 /* CurrencyManager.m */,
 				1D3623240D0F684500981E51 /* AppSalesMobileAppDelegate.h */,
 				1D3623250D0F684500981E51 /* AppSalesMobileAppDelegate.m */,
-				7F87BC950ED9B510001C8BC8 /* PasswordKeeper.h */,
-				7F87BC960ED9B510001C8BC8 /* PasswordKeeper.m */,
+				34DCF08E0F0461A2009F9929 /* SFHFKeychainUtils.h */,
+				34DCF08D0F0461A2009F9929 /* SFHFKeychainUtils.m */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -1285,9 +1285,9 @@
 				7FB0CCC90EBBD7D0005E2C45 /* EntryCell.m in Sources */,
 				7F17E0570ED4F21E0005D8AF /* CurrencySelectionDialog.m in Sources */,
 				7F29EA630ED861CE0018C18A /* HelpBrowser.m in Sources */,
-				7F87BC970ED9B510001C8BC8 /* PasswordKeeper.m in Sources */,
 				7F81F8AE0EE2557D00052E7A /* ProductCell.m in Sources */,
 				7FB3919E0EE7992F00AC30D5 /* Reachability.m in Sources */,
+				34DCF08F0F0461A2009F9929 /* SFHFKeychainUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

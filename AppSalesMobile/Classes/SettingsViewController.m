@@ -31,7 +31,7 @@ AppSalesMobile
 #import "SettingsViewController.h"
 #import "CurrencyManager.h"
 #import "CurrencySelectionDialog.h"
-#import "PasswordKeeper.h"
+#import "SFHFKeychainUtils.h"
 
 @implementation SettingsViewController
 
@@ -63,10 +63,14 @@ AppSalesMobile
 	loginSectionLabel.font = [UIFont boldSystemFontOfSize:16.0];
 	lastRefreshLabel.font = [UIFont systemFontOfSize:12.0];
 	
-	NSString *username = [[PasswordKeeper sharedInstance] objectForKey:@"iTunesConnectUsername"];
-	if (username) usernameTextField.text = username;
-	NSString *password = [[PasswordKeeper sharedInstance] objectForKey:@"iTunesConnectPassword"];
-	if (password) passwordTextField.text = password;
+	NSString *username = [[NSUserDefaults standardUserDefaults] stringForKey:@"iTunesConnectUsername"];
+	if (username) {
+		usernameTextField.text = username;
+		NSString *password = [SFHFKeychainUtils getPasswordForUsername:username
+														andServiceName:@"omz:software AppSales Mobile Service"
+																 error:NULL];
+		if (password) passwordTextField.text = password;
+	}
 	
 	[self baseCurrencyChanged];
 	
@@ -101,11 +105,16 @@ AppSalesMobile
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-	if (usernameTextField.text)
-		[[PasswordKeeper sharedInstance] setObject:usernameTextField.text forKey:@"iTunesConnectUsername"];
-	if (passwordTextField.text)
-		[[PasswordKeeper sharedInstance] setObject:passwordTextField.text forKey:@"iTunesConnectPassword"];
-	
+	if (usernameTextField.text.length) {
+		[[NSUserDefaults standardUserDefaults] setObject:usernameTextField.text
+												  forKey:@"iTunesConnectUsername"];
+		if (passwordTextField.text.length)
+			[SFHFKeychainUtils storeUsername:usernameTextField.text
+								 andPassword:passwordTextField.text
+							  forServiceName:@"omz:software AppSales Mobile Service"
+							  updateExisting:YES
+									   error:NULL];
+	}
 }
 
 - (IBAction)changeCurrency:(id)sender

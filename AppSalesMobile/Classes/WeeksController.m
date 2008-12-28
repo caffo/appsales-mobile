@@ -148,8 +148,6 @@
 	[countriesController.tableView reloadData];
 	
 	[[self navigationController] pushViewController:countriesController animated:YES];
-	
-	//[self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath 
@@ -160,8 +158,6 @@
 		int row = [indexPath row];
 		NSArray *selectedMonth = [self.daysByMonth objectAtIndex:section];
 		Day *selectedDay = [selectedMonth objectAtIndex:row];
-		
-		[tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationLeft];
 		
 		[rootViewController deleteDay:selectedDay];
 	}
