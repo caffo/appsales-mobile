@@ -297,6 +297,96 @@ AppSalesMobile
 	[self performSelectorOnMainThread:@selector(setProgress:) withObject:[NSNumber numberWithFloat:0.2] waitUntilDone:YES];
 	
 	scanner = [NSScanner scannerWithString:dateTypeSelectionPage];
+	
+	// check if page is "choose vendor" page (Patch by Christian Beer, thanks!)
+	if ([scanner scanUpToString:@"enctype=\"multipart/form-data\" action=\"" intoString:NULL]) {
+		NSString *chooseVendorAction = nil;
+		[scanner scanString:@"enctype=\"multipart/form-data\" action=\"" intoString:NULL];
+		[scanner scanUpToString:@"\"" intoString:&chooseVendorAction];
+		
+		// get vendor Id
+		[scanner scanUpToString:@"<option value=\"null\">" intoString:NULL];
+		[scanner scanString:@"<option value=\"null\">" intoString:NULL];
+		[scanner scanUpToString:@"<option value=\"" intoString:NULL];
+		[scanner scanString:@"<option value=\"" intoString:NULL];
+		NSString *vendorId = nil;
+		[scanner scanUpToString:@"\"" intoString:&vendorId];
+		
+		if (chooseVendorAction != nil) {
+			NSString *chooseVendorURLString = [ittsBaseURL stringByAppendingString:chooseVendorAction];
+			NSURL *chooseVendorURL = [NSURL URLWithString:chooseVendorURLString];
+			//NSLog(@"%@", chooseVendorURLString);
+			NSDictionary *chooseVendorDict = [NSDictionary dictionaryWithObjectsAndKeys:
+											  vendorId, @"9.6.0", 
+											  vendorId, @"vndrid", 
+											  @"1", @"Select1", 
+											  @"", @"9.18", nil];
+			NSString *encodedChooseVendorDict = [chooseVendorDict formatForHTTP];
+			NSData *httpBody = [encodedChooseVendorDict dataUsingEncoding:NSASCIIStringEncoding];
+			NSMutableURLRequest *chooseVendorRequest = [NSMutableURLRequest requestWithURL:chooseVendorURL];
+			[chooseVendorRequest setHTTPMethod:@"POST"];
+			[chooseVendorRequest setHTTPBody:httpBody];
+			NSData *chooseVendorSelectionPageData = [NSURLConnection sendSynchronousRequest:chooseVendorRequest returningResponse:NULL error:NULL];
+			if (chooseVendorSelectionPageData == nil) {
+				NSLog(@"Error: could not choose vendor");
+				[pool release];
+				[self performSelectorOnMainThread:@selector(downloadFailed) withObject:nil waitUntilDone:YES];
+				return;
+			}
+			NSString *chooseVendorSelectionPage = [[[NSString alloc] initWithData:chooseVendorSelectionPageData encoding:NSUTF8StringEncoding] autorelease];
+		
+			scanner = [NSScanner scannerWithString:chooseVendorSelectionPage];
+			[scanner scanUpToString:@"enctype=\"multipart/form-data\" action=\"" intoString:NULL];
+			NSString *chooseVendorAction2 = nil;
+			[scanner scanString:@"enctype=\"multipart/form-data\" action=\"" intoString:NULL];
+			[scanner scanUpToString:@"\"" intoString:&chooseVendorAction2];
+		
+			chooseVendorURLString = [ittsBaseURL stringByAppendingString:chooseVendorAction2];
+			chooseVendorURL = [NSURL URLWithString:chooseVendorURLString];
+			//NSLog(@"%@", chooseVendorURLString);
+			chooseVendorDict = [NSDictionary dictionaryWithObjectsAndKeys:
+								vendorId, @"9.6.0", 
+								vendorId, @"vndrid", 
+								@"999998", @"Select1", 
+								@"", @"9.18", 
+								@"Submit", @"SubmitBtn", nil];
+			encodedChooseVendorDict = [chooseVendorDict formatForHTTP];
+			httpBody = [encodedChooseVendorDict dataUsingEncoding:NSASCIIStringEncoding];
+			chooseVendorRequest = [NSMutableURLRequest requestWithURL:chooseVendorURL];
+			[chooseVendorRequest setHTTPMethod:@"POST"];
+			[chooseVendorRequest setHTTPBody:httpBody];
+			chooseVendorSelectionPageData = [NSURLConnection sendSynchronousRequest:chooseVendorRequest returningResponse:NULL error:NULL];
+			if (chooseVendorSelectionPageData == nil) {
+				NSLog(@"Error: could not choose vendor page 2");
+				[pool release];
+				[self performSelectorOnMainThread:@selector(downloadFailed) withObject:nil waitUntilDone:YES];
+				return;
+			}
+			chooseVendorSelectionPage = [[[NSString alloc] initWithData:chooseVendorSelectionPageData encoding:NSUTF8StringEncoding] autorelease];			
+		
+			scanner = [NSScanner scannerWithString:chooseVendorSelectionPage];
+			[scanner scanUpToString:@"<td class=\"content\">" intoString:NULL];
+			[scanner scanUpToString:@"<a href=\"" intoString:NULL];
+			[scanner scanString:@"<a href=\"" intoString:NULL];
+			NSString *trendReportsAction = nil;
+			[scanner scanUpToString:@"\"" intoString:&trendReportsAction];
+			NSString *trendReportsURLString = [ittsBaseURL stringByAppendingString:trendReportsAction];
+			NSURL *trendReportsURL = [NSURL URLWithString:trendReportsURLString];
+			//NSLog(@"%@", trendReportsURLString);
+			NSMutableURLRequest *trendReportsRequest = [NSMutableURLRequest requestWithURL:trendReportsURL];
+			[trendReportsRequest setHTTPMethod:@"GET"];
+			chooseVendorSelectionPageData = [NSURLConnection sendSynchronousRequest:trendReportsRequest returningResponse:NULL error:NULL];
+			if (chooseVendorSelectionPageData == nil) {
+				NSLog(@"Error: could not open trend report page");
+				[pool release];
+				[self performSelectorOnMainThread:@selector(downloadFailed) withObject:nil waitUntilDone:YES];
+				return;
+			}
+			dateTypeSelectionPage = [[[NSString alloc] initWithData:chooseVendorSelectionPageData encoding:NSUTF8StringEncoding] autorelease];
+		}
+	}
+	
+	scanner = [NSScanner scannerWithString:dateTypeSelectionPage];
 	NSString *dateTypeAction = nil;
 	[scanner scanUpToString:@"name=\"frmVendorPage\" action=\"" intoString:NULL];
 	[scanner scanString:@"name=\"frmVendorPage\" action=\"" intoString:NULL];
