@@ -35,6 +35,13 @@
 
 @synthesize webView;
 
+
+- (void)dealloc 
+{
+	self.webView = nil;	
+	[super dealloc];
+}
+
 - (void)loadView
 {
 	self.view = [[[UIWebView alloc] initWithFrame:CGRectMake(0,0,320,480)] autorelease];
@@ -47,12 +54,6 @@
 	NSString *helpPath = [[NSBundle mainBundle] pathForResource:@"index" ofType:@"html" inDirectory:@"help"];
 	NSURL *helpURL = [NSURL fileURLWithPath:helpPath];
 	[self.webView loadRequest:[NSURLRequest requestWithURL:helpURL]];
-}
-
-- (void)dealloc 
-{
-	self.webView = nil;	
-	[super dealloc];
 }
 
 

@@ -42,6 +42,13 @@
 @synthesize totalRevenue;
 @synthesize displayMode;
 
+- (void)dealloc 
+{
+	self.products = nil;
+	self.countries = nil;
+    [super dealloc];
+}
+
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
@@ -158,13 +165,6 @@
 		[self.navigationController pushViewController:entriesController animated:YES];
 		[self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 	}
-}
-
-- (void)dealloc 
-{
-	self.products = nil;
-	self.countries = nil;
-    [super dealloc];
 }
 
 

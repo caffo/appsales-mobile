@@ -39,21 +39,6 @@
 @synthesize daysByMonth;
 @synthesize maxRevenue;
 
-/*
- - (id)initWithStyle:(UITableViewStyle)style {
- // Override initWithStyle: if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
- if (self = [super initWithStyle:style]) {
- }
- return self;
- }
- */
-
-/*
- // Implement viewDidLoad to do additional setup after loading the view.
- - (void)viewDidLoad {
- [super viewDidLoad];
- }
- */
 
 - (id)initWithCoder:(NSCoder *)coder
 {
@@ -61,6 +46,12 @@
 	self.daysByMonth = [NSMutableArray array];
 	self.maxRevenue = 0.1;
 	return self;
+}
+
+- (void)dealloc 
+{
+	self.daysByMonth = nil;
+    [super dealloc];
 }
 
 - (void)viewDidLoad
@@ -113,7 +104,6 @@
 	cell.maxRevenue = self.maxRevenue;
     cell.day = [[self.daysByMonth objectAtIndex:[indexPath section]] objectAtIndex:[indexPath row]];
 	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-	//cell.text = [[[self.daysByMonth objectAtIndex:[indexPath section]] objectAtIndex:[indexPath row]] description];
 	
     return cell;
 }
@@ -165,13 +155,8 @@
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath 
 {
- return YES;
-}
-
-- (void)dealloc 
-{
-	self.daysByMonth = nil;
-    [super dealloc];
+	//enables 'swipe-to-delete'
+	return YES;
 }
 
 

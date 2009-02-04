@@ -40,21 +40,6 @@
 @synthesize daysByMonth;
 @synthesize maxRevenue;
 
-/*
-- (id)initWithStyle:(UITableViewStyle)style {
-    // Override initWithStyle: if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
-    if (self = [super initWithStyle:style]) {
-    }
-    return self;
-}
-*/
-
-/*
-// Implement viewDidLoad to do additional setup after loading the view.
-- (void)viewDidLoad {
-    [super viewDidLoad];
-}
-*/
 
 - (id)initWithCoder:(NSCoder *)coder
 {
@@ -114,7 +99,6 @@
 	cell.maxRevenue = self.maxRevenue;
     cell.day = [[self.daysByMonth objectAtIndex:[indexPath section]] objectAtIndex:[indexPath row]];
 	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-	//cell.text = [[[self.daysByMonth objectAtIndex:[indexPath section]] objectAtIndex:[indexPath row]] description];
 	
     return cell;
 }
@@ -141,11 +125,7 @@
 	
 	countriesController.countries = children;
 	
-	//[countriesController.tableView reloadData];
-	
 	[[self navigationController] pushViewController:countriesController animated:YES];
-	
-	//[self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 
@@ -153,7 +133,6 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath 
 {    
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-		//NSLog(@"%@", rootViewController);
 		int section = [indexPath section];
 		int row = [indexPath row];
 		NSArray *selectedMonth = [self.daysByMonth objectAtIndex:section];
@@ -167,43 +146,6 @@
 {
     return YES;
 }
-
-
-/*
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    return YES;
-}
-*/
-
-
-/*
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-}
-*/
-/*
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-}
-*/
-/*
-- (void)viewWillDisappear:(BOOL)animated {
-}
-*/
-/*
-- (void)viewDidDisappear:(BOOL)animated {
-}
-*/
-/*
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-}
-*/
 
 - (void)dealloc 
 {

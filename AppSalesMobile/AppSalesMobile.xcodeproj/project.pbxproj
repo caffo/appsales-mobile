@@ -267,7 +267,6 @@
 		7FB0CC890EBBD2EB005E2C45 /* EntriesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FB0CC880EBBD2EB005E2C45 /* EntriesController.m */; };
 		7FB0CCC90EBBD7D0005E2C45 /* EntryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FB0CCC80EBBD7D0005E2C45 /* EntryCell.m */; };
 		7FB391990EE7991D00AC30D5 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FB391980EE7991D00AC30D5 /* SystemConfiguration.framework */; };
-		7FB3919E0EE7992F00AC30D5 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FB3919D0EE7992F00AC30D5 /* Reachability.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -556,8 +555,6 @@
 		7FB0CCC70EBBD7D0005E2C45 /* EntryCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntryCell.h; sourceTree = "<group>"; };
 		7FB0CCC80EBBD7D0005E2C45 /* EntryCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntryCell.m; sourceTree = "<group>"; };
 		7FB391980EE7991D00AC30D5 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		7FB3919C0EE7992F00AC30D5 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
-		7FB3919D0EE7992F00AC30D5 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -624,6 +621,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				7F15C8790F126E86007B8154 /* Existing Days */,
 				7F29EA340ED861B20018C18A /* help */,
 				7F9AEDDF0EC64DE700D5C88D /* Icon.png */,
 				7FB0C3F00EB97329005E2C45 /* Default.png */,
@@ -680,6 +678,13 @@
 			name = "Navigation Icons";
 			sourceTree = "<group>";
 		};
+		7F15C8790F126E86007B8154 /* Existing Days */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Existing Days";
+			sourceTree = "<group>";
+		};
 		7F6A39BF0ED318FF0037C36A /* View Controller */ = {
 			isa = PBXGroup;
 			children = (
@@ -723,8 +728,6 @@
 		7FB0C5830EBA3431005E2C45 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				7FB3919C0EE7992F00AC30D5 /* Reachability.h */,
-				7FB3919D0EE7992F00AC30D5 /* Reachability.m */,
 				7FB0C4400EB97BC1005E2C45 /* NSDictionary+HTTP.h */,
 				7FB0C4410EB97BC1005E2C45 /* NSDictionary+HTTP.m */,
 				7FB0C4A90EB99D01005E2C45 /* CurrencyManager.h */,
@@ -1286,7 +1289,6 @@
 				7F17E0570ED4F21E0005D8AF /* CurrencySelectionDialog.m in Sources */,
 				7F29EA630ED861CE0018C18A /* HelpBrowser.m in Sources */,
 				7F81F8AE0EE2557D00052E7A /* ProductCell.m in Sources */,
-				7FB3919E0EE7992F00AC30D5 /* Reachability.m in Sources */,
 				34DCF08F0F0461A2009F9929 /* SFHFKeychainUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -35,21 +35,10 @@ AppSalesMobile
 
 @implementation SettingsViewController
 
-/*
-// Override initWithNibName:bundle: to load the view using a nib file then perform additional customization that is not appropriate for viewDidLoad.
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
-        // Custom initialization
-    }
-    return self;
+- (void)dealloc 
+{
+    [super dealloc];
 }
-*/
-
-/*
-// Implement loadView to create a view hierarchy programmatically.
-- (void)loadView {
-}
-*/
 
 - (void)viewDidLoad 
 {
@@ -72,8 +61,7 @@ AppSalesMobile
 		if (password) passwordTextField.text = password;
 	}
 	
-	[self baseCurrencyChanged];
-	
+	[self baseCurrencyChanged]; //set proper currency button title
 	[self currencyRatesDidUpdate]; //set proper refresh date in label
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(currencyRatesDidUpdate) name:@"CurrencyManagerDidUpdate" object:nil];
@@ -81,6 +69,28 @@ AppSalesMobile
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(baseCurrencyChanged) name:@"CurrencyManagerDidChangeBaseCurrency" object:nil];
 }
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+	if (usernameTextField.text.length) {
+		[[NSUserDefaults standardUserDefaults] setObject:usernameTextField.text
+												  forKey:@"iTunesConnectUsername"];
+		if (passwordTextField.text.length)
+			[SFHFKeychainUtils storeUsername:usernameTextField.text
+								 andPassword:passwordTextField.text
+							  forServiceName:@"omz:software AppSales Mobile Service"
+							  updateExisting:YES
+									   error:NULL];
+	}
+}
+
+#pragma mark Text Field Delegate 
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+	[textField resignFirstResponder];
+	return YES;
+}
+
+#pragma mark Currencies
 - (void)currencyRatesDidUpdate
 {
 	NSDate *lastRefresh = [[CurrencyManager sharedManager] lastRefresh];
@@ -103,20 +113,6 @@ AppSalesMobile
 	[currencySelectionControl setTitle:[NSString stringWithFormat:NSLocalizedString(@"Select... ( %@ )",nil), [[CurrencyManager sharedManager] baseCurrencyDescription]] forSegmentAtIndex:0];
 }
 
-- (void)viewWillDisappear:(BOOL)animated
-{
-	if (usernameTextField.text.length) {
-		[[NSUserDefaults standardUserDefaults] setObject:usernameTextField.text
-												  forKey:@"iTunesConnectUsername"];
-		if (passwordTextField.text.length)
-			[SFHFKeychainUtils storeUsername:usernameTextField.text
-								 andPassword:passwordTextField.text
-							  forServiceName:@"omz:software AppSales Mobile Service"
-							  updateExisting:YES
-									   error:NULL];
-	}
-}
-
 - (IBAction)changeCurrency:(id)sender
 {
 	CurrencySelectionDialog *currencySelectionDialog = [[CurrencySelectionDialog new] autorelease];
@@ -124,26 +120,9 @@ AppSalesMobile
 	[self presentModalViewController:navController animated:YES];
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-	[textField resignFirstResponder];
-	return YES;
-}
-
 - (IBAction)refreshExchangeRates:(id)sender
 {
 	[[CurrencyManager sharedManager] forceRefresh];
 }
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
-{
-    // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
-
-- (void)dealloc {
-    [super dealloc];
-}
-
 
 @end

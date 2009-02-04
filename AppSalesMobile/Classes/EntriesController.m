@@ -36,18 +36,23 @@
 
 @synthesize entries;
 
+
+- (void)dealloc 
+{
+	self.entries = nil;
+    [super dealloc];
+}
+
 - (void)viewDidLoad 
 {
     [super viewDidLoad];
 	self.tableView.rowHeight = 45.0;
 }
 
-
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView 
 {
     return 1;
 }
-
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section 
 {
@@ -56,7 +61,6 @@
 	
     return 0;
 }
-
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
@@ -71,12 +75,6 @@
 	cell.entry = entry;
 	
     return cell;
-}
-
-- (void)dealloc 
-{
-	self.entries = nil;
-    [super dealloc];
 }
 
 

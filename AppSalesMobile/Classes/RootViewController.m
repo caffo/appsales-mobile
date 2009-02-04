@@ -1,32 +1,32 @@
 /*
-RootViewController.m
-AppSalesMobile
-
-* Copyright (c) 2008, omz:software
-* All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*     * Redistributions of source code must retain the above copyright
-*       notice, this list of conditions and the following disclaimer.
-*     * Redistributions in binary form must reproduce the above copyright
-*       notice, this list of conditions and the following disclaimer in the
-*       documentation and/or other materials provided with the distribution.
-*     * Neither the name of the <organization> nor the
-*       names of its contributors may be used to endorse or promote products
-*       derived from this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY omz:software ''AS IS'' AND ANY
-* EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL <copyright holder> BE LIABLE FOR ANY
-* DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-* (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-* LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-* ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-* (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-* SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ RootViewController.m
+ AppSalesMobile
+ 
+ * Copyright (c) 2008, omz:software
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of the <organization> nor the
+ *       names of its contributors may be used to endorse or promote products
+ *       derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY omz:software ''AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL <copyright holder> BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 #import <zlib.h>
 #import "RootViewController.h"
@@ -41,7 +41,13 @@ AppSalesMobile
 #import "WeeksController.h"
 #import "HelpBrowser.h"
 #import "SFHFKeychainUtils.h"
-#import "Reachability.h"
+
+@interface RootViewController (Internals)
+
+- (void)importExistingDayData;
+
+@end
+
 
 @implementation RootViewController
 
@@ -56,7 +62,6 @@ AppSalesMobile
 	self.weeks = [NSMutableDictionary dictionary];
 	
 	NSArray *filenames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[self docPath] error:NULL];
-	//NSLog(@"Filenames: %@", filenames);
 	
 	for (NSString *filename in filenames) {
 		if (![[filename pathExtension] isEqual:@"dat"])
@@ -73,6 +78,7 @@ AppSalesMobile
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(saveData) name:UIApplicationWillTerminateNotification object:nil];
 	
+	[self importExistingDayData];
 	return self;
 }
 
@@ -123,7 +129,7 @@ AppSalesMobile
 	[footer addTarget:self action:@selector(visitIconDrawer) forControlEvents:UIControlEventTouchUpInside];
 	[footer setTitle:NSLocalizedString(@"Flag icons by icondrawer.com",nil) forState:UIControlStateNormal];
 	[tableView setTableFooterView:footer];
-		
+	
 	[[CurrencyManager sharedManager] refreshIfNeeded];
 }
 
@@ -247,10 +253,36 @@ AppSalesMobile
 	}
 }
 
+Day *ImportDayData(NSData *dayData, BOOL compressed) {
+	if (compressed) {
+		NSString *zipFile = [NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.gz"];
+		NSString *textFile = [NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.txt"];
+		[dayData writeToFile:zipFile atomically:YES];
+		gzFile file = gzopen([zipFile UTF8String], "rb");
+		FILE *dest = fopen([textFile UTF8String], "w");
+		unsigned char buffer[262144];
+		int uncompressedLength = gzread(file, buffer, 262144);
+		if(fwrite(buffer, 1, uncompressedLength, dest) != uncompressedLength || ferror(dest)) {
+			NSLog(@"error writing data");
+		}
+		fclose(dest);
+		gzclose(file);
+		
+		NSString *text = [NSString stringWithContentsOfFile:textFile];
+		[[NSFileManager defaultManager] removeItemAtPath:zipFile error:NULL];
+		[[NSFileManager defaultManager] removeItemAtPath:textFile error:NULL];
+		return [[[Day alloc] initWithCSV:text] autorelease];
+	} else {
+		NSString *text = [[NSString alloc] initWithData:dayData encoding:NSUTF8StringEncoding];
+		Day *day = [[[Day alloc] initWithCSV:text] autorelease];
+		[text release];
+		return day;
+	}
+}
+
 - (void)fetchReportsWithUserInfo:(NSDictionary *)userInfo
 {
 	NSAutoreleasePool *pool = [NSAutoreleasePool new];
-	//NSLog(@"Starting download...");
 	NSMutableDictionary *downloadedDays = [NSMutableDictionary dictionary];
 	
 	[self performSelectorOnMainThread:@selector(setProgress:) withObject:[NSNumber numberWithFloat:0.0] waitUntilDone:YES];
@@ -269,13 +301,10 @@ AppSalesMobile
 	[scanner scanUpToString:@"name=\"appleConnectForm\" action=\"" intoString:NULL];
 	[scanner scanString:@"name=\"appleConnectForm\" action=\"" intoString:NULL];
 	[scanner scanUpToString:@"\"" intoString:&loginAction];
-	//if (!loginAction)
-	//	NSLog(@"Login action not found, maybe already logged in...");
 	NSString *dateTypeSelectionPage;
 	if (loginAction) { //not logged in yet
 		NSString *loginURLString = [ittsBaseURL stringByAppendingString:loginAction];
 		NSURL *loginURL = [NSURL URLWithString:loginURLString];
-		//NSLog(@"%@", loginURLString);
 		NSDictionary *loginDict = [NSDictionary dictionaryWithObjectsAndKeys:username, @"theAccountName", password, @"theAccountPW", nil];
 		NSString *encodedLoginDict = [loginDict formatForHTTP];
 		NSData *httpBody = [encodedLoginDict dataUsingEncoding:NSASCIIStringEncoding];
@@ -315,7 +344,6 @@ AppSalesMobile
 		if (chooseVendorAction != nil) {
 			NSString *chooseVendorURLString = [ittsBaseURL stringByAppendingString:chooseVendorAction];
 			NSURL *chooseVendorURL = [NSURL URLWithString:chooseVendorURLString];
-			//NSLog(@"%@", chooseVendorURLString);
 			NSDictionary *chooseVendorDict = [NSDictionary dictionaryWithObjectsAndKeys:
 											  vendorId, @"9.6.0", 
 											  vendorId, @"vndrid", 
@@ -334,16 +362,15 @@ AppSalesMobile
 				return;
 			}
 			NSString *chooseVendorSelectionPage = [[[NSString alloc] initWithData:chooseVendorSelectionPageData encoding:NSUTF8StringEncoding] autorelease];
-		
+			
 			scanner = [NSScanner scannerWithString:chooseVendorSelectionPage];
 			[scanner scanUpToString:@"enctype=\"multipart/form-data\" action=\"" intoString:NULL];
 			NSString *chooseVendorAction2 = nil;
 			[scanner scanString:@"enctype=\"multipart/form-data\" action=\"" intoString:NULL];
 			[scanner scanUpToString:@"\"" intoString:&chooseVendorAction2];
-		
+			
 			chooseVendorURLString = [ittsBaseURL stringByAppendingString:chooseVendorAction2];
 			chooseVendorURL = [NSURL URLWithString:chooseVendorURLString];
-			//NSLog(@"%@", chooseVendorURLString);
 			chooseVendorDict = [NSDictionary dictionaryWithObjectsAndKeys:
 								vendorId, @"9.6.0", 
 								vendorId, @"vndrid", 
@@ -363,7 +390,7 @@ AppSalesMobile
 				return;
 			}
 			chooseVendorSelectionPage = [[[NSString alloc] initWithData:chooseVendorSelectionPageData encoding:NSUTF8StringEncoding] autorelease];			
-		
+			
 			scanner = [NSScanner scannerWithString:chooseVendorSelectionPage];
 			[scanner scanUpToString:@"<td class=\"content\">" intoString:NULL];
 			[scanner scanUpToString:@"<a href=\"" intoString:NULL];
@@ -372,7 +399,6 @@ AppSalesMobile
 			[scanner scanUpToString:@"\"" intoString:&trendReportsAction];
 			NSString *trendReportsURLString = [ittsBaseURL stringByAppendingString:trendReportsAction];
 			NSURL *trendReportsURL = [NSURL URLWithString:trendReportsURLString];
-			//NSLog(@"%@", trendReportsURLString);
 			NSMutableURLRequest *trendReportsRequest = [NSMutableURLRequest requestWithURL:trendReportsURL];
 			[trendReportsRequest setHTTPMethod:@"GET"];
 			chooseVendorSelectionPageData = [NSURLConnection sendSynchronousRequest:trendReportsRequest returningResponse:NULL error:NULL];
@@ -405,16 +431,13 @@ AppSalesMobile
 		if (i==0) {
 			downloadType = @"Daily";
 			downloadActionName = @"9.11.1";
-			//NSLog(@"Downloading days...");
 		}
 		else {
 			downloadType = @"Weekly";
 			downloadActionName = @"9.13.1";
-			//NSLog(@"Downloading weeks...");
 		}
-	
+		
 		NSString *dateTypeSelectionURLString = [ittsBaseURL stringByAppendingString:dateTypeAction]; 
-		//NSLog(@"%@", dateTypeSelectionURLString);
 		NSDictionary *dateTypeDict = [NSDictionary dictionaryWithObjectsAndKeys:
 									  downloadType, @"9.9", 
 									  downloadType, @"hiddenDayOrWeekSelection", 
@@ -427,10 +450,7 @@ AppSalesMobile
 		[dateTypeRequest setHTTPBody:httpBody];
 		NSData *daySelectionPageData = [NSURLConnection sendSynchronousRequest:dateTypeRequest returningResponse:NULL error:NULL];
 		
-		//[self performSelectorOnMainThread:@selector(setProgress:) withObject:[NSNumber numberWithFloat:0.3] waitUntilDone:YES];
-		
 		if (daySelectionPageData == nil) {
-			//NSLog(@"Error: could not get list of days");
 			[pool release];
 			[self performSelectorOnMainThread:@selector(downloadFailed) withObject:nil waitUntilDone:YES];
 			return;
@@ -445,7 +465,6 @@ AppSalesMobile
 			scannedDay = [scanner scanString:@"<option value=\"" intoString:NULL];
 			scannedDay = [scanner scanUpToString:@"\"" intoString:&dayString];
 			if (dayString) {
-				//NSLog(@"%@", dayString);
 				if ([dayString rangeOfString:@"/"].location != NSNotFound)
 					[availableDays addObject:dayString];
 				scannedDay = YES;
@@ -454,8 +473,7 @@ AppSalesMobile
 				scannedDay = NO;
 			}
 		}
-		//NSLog(@"Available downloads: %@", availableDays);
-			
+		
 		if (i==0) { //daily
 			NSArray *daysToSkip = [userInfo objectForKey:@"daysToSkip"];
 			[availableDays removeObjectsInArray:daysToSkip];			
@@ -465,8 +483,6 @@ AppSalesMobile
 			[availableDays removeObjectsInArray:weeksToSkip];
 		}
 		
-		//NSLog(@"New downloads: %@", availableDays);
-		
 		float progressForOneDay = 0.4 / ((float)[availableDays count]);
 		scanner = [NSScanner scannerWithString:daySelectionPage];
 		NSString *dayDownloadAction = nil;
@@ -474,13 +490,11 @@ AppSalesMobile
 		[scanner scanString:@"name=\"frmVendorPage\" action=\"" intoString:NULL];
 		[scanner scanUpToString:@"\"" intoString:&dayDownloadAction];
 		if (dayDownloadAction == nil) {
-			//NSLog(@"Error: couldn't find download action");
 			[pool release];
 			[self performSelectorOnMainThread:@selector(downloadFailed) withObject:nil waitUntilDone:YES];
 			return;
 		}
 		NSString *dayDownloadActionURLString = [ittsBaseURL stringByAppendingString:dayDownloadAction];
-		//NSLog(@"%@", dayDownloadActionURLString);
 		for (NSString *dayString in availableDays) {
 			NSDictionary *dayDownloadDict = [NSDictionary dictionaryWithObjectsAndKeys:
 											 downloadType, @"9.9", 
@@ -497,31 +511,12 @@ AppSalesMobile
 			NSData *dayData = [NSURLConnection sendSynchronousRequest:dayDownloadRequest returningResponse:NULL error:NULL];
 			
 			if (daySelectionPageData == nil) {
-				//NSLog(@"Error: could not download day");
 				[pool release];
 				[self performSelectorOnMainThread:@selector(downloadFailed) withObject:nil waitUntilDone:YES];
 				return;
 			}
 			
-			NSString *zipFile = [NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.gz"];
-			NSString *textFile = [NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.txt"];
-			[dayData writeToFile:zipFile atomically:YES];
-			gzFile file = gzopen([zipFile UTF8String], "rb");
-			FILE *dest = fopen([textFile UTF8String], "w");
-			unsigned char buffer[262144];
-			int uncompressedLength = gzread(file, buffer, 262144);
-			if(fwrite(buffer, 1, uncompressedLength, dest) != uncompressedLength || ferror(dest)) {
-				NSLog(@"error writing data");
-			}
-			fclose(dest);
-			gzclose(file);
-			
-			NSString *text = [NSString stringWithContentsOfFile:textFile];
-						
-			[[NSFileManager defaultManager] removeItemAtPath:zipFile error:NULL];
-			[[NSFileManager defaultManager] removeItemAtPath:textFile error:NULL];
-			
-			Day *day = [[[Day alloc] initWithCSV:text] autorelease];
+			Day *day = ImportDayData(dayData, YES);
 			if (day != nil) {
 				if (i != 0)
 					day.isWeek = YES;
@@ -553,8 +548,6 @@ AppSalesMobile
 			[alert show];
 			return;
 		}
-		if (![[Reachability sharedReachability] checkInternetConnectionAndDisplayAlert])
-			return;
 		
 		isRefreshing = YES;
 		NSArray *daysToSkip = [days allKeys];
@@ -688,6 +681,70 @@ AppSalesMobile
 	[aTableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
+#pragma mark Import
+
+NSString *importDayDataDayName(NSString *file) {
+	NSArray *components = [file componentsSeparatedByString:@"_"];
+	if ([components count] == 6) {
+		NSString *date = [components objectAtIndex:4];
+		if ([date length] == 8) {
+			return [NSString stringWithFormat:@"%@/%@/%@", [date substringWithRange:NSMakeRange(4, 2)],
+					[date substringWithRange:NSMakeRange(6, 2)], [date substringWithRange:NSMakeRange(0, 4)]];
+		} else {
+			return nil;
+		}
+	} else {
+		return nil;
+	}
+}
+
+- (void)importExistingDayData
+{
+	NSArray *daysToSkip = [days allKeys];
+	NSArray *weeksToSkip = [weeks allKeys];
+	NSMutableDictionary *downloadedDays = [NSMutableDictionary dictionary];
+	NSMutableDictionary *downloadedWeeks = [NSMutableDictionary dictionary];
+	
+	NSString *path = [[NSBundle mainBundle] bundlePath];
+	NSFileManager *fman = [NSFileManager defaultManager];
+	NSArray *dir = [fman directoryContentsAtPath:path];
+	for (NSString *file in dir) {
+		if ([file hasPrefix:@"S_D_"]) {
+			NSString *dayString = importDayDataDayName(file);
+			if (![daysToSkip containsObject:dayString]) {
+				Day *day = ImportDayData([NSData dataWithContentsOfFile:[NSString stringWithFormat:@"%@/%@", path, file]], [file hasSuffix:@".gz"]);
+				if (day != nil) {
+					NSLog(@"IMPORTED DAY %@", day);
+					[downloadedDays setObject:day forKey:dayString];
+					day.name = dayString;
+				} else {
+					NSLog(@"FAILED %@", file);
+				}
+			} else {
+				NSLog(@"SKIPPING %@", dayString);
+			}
+		}
+		else if ([file hasPrefix:@"S_W_"]) {
+			NSString *weekString = importDayDataDayName(file);
+			if (![weeksToSkip containsObject:weekString]) {
+				Day *week = ImportDayData([NSData dataWithContentsOfFile:[NSString stringWithFormat:@"%@/%@", path, file]], [file hasSuffix:@".gz"]);
+				if (week != nil) {
+					NSLog(@"IMPORTED WEEK %@", week);
+					[downloadedWeeks setObject:week forKey:weekString];
+					week.name = weekString;
+					week.isWeek = YES;
+				} else {
+					NSLog(@"FAILED %@", file);
+				}
+			} else {
+				NSLog(@"SKIPPING %@", weekString);
+			}
+		}
+	}
+	
+	[self performSelectorOnMainThread:@selector(successfullyDownloadedDays:) withObject:downloadedDays waitUntilDone:YES];
+	[self performSelectorOnMainThread:@selector(successfullyDownloadedWeeks:) withObject:downloadedWeeks waitUntilDone:YES];
+}
 
 @end
 
