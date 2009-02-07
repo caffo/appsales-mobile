@@ -79,6 +79,22 @@
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(saveData) name:UIApplicationWillTerminateNotification object:nil];
 	
 	[self importExistingDayData];
+
+	/* Note the date of the most recent day for which we have data */
+	NSDate *lastDownloadedDate = [[NSUserDefaults standardUserDefaults] objectForKey:@"ReportsLastDownloadedDate"];
+	if (lastDownloadedDate) {
+		NSDateComponents *components = [[NSCalendar currentCalendar] components:NSDayCalendarUnit
+																	   fromDate:lastDownloadedDate
+																		 toDate:[NSDate date]
+																		options:0];
+		/* We'll never have *today's* reports, as the most recent are yesterday's. We therefore want to download
+		 * if the most recent reports were older than yesterday.
+		 */
+		if ([components day] > 1) {
+			[self downloadReports:nil];
+		}
+	}
+
 	return self;
 }
 
@@ -225,6 +241,16 @@
 {
 	[days addEntriesFromDictionary:newDays];
 	[self refreshDayList];
+
+	if (daysController.daysByMonth.count) {
+		NSArray *mostRecentMonth = [daysController.daysByMonth objectAtIndex:0];
+		if (mostRecentMonth.count) {
+			Day *day = [mostRecentMonth objectAtIndex:0];
+			
+			/* Note the date of the most recent day for which we have data */
+			[[NSUserDefaults standardUserDefaults] setObject:day.date forKey:@"ReportsLastDownloadedDate"];
+		}
+	}
 }
 
 - (void)successfullyDownloadedWeeks:(NSDictionary *)newDays
