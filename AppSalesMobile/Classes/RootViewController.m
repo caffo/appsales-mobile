@@ -540,9 +540,11 @@ Day *ImportDayData(NSData *dayData, BOOL compressed) {
 {
 	if (!isRefreshing) {
 		NSString *username = [[NSUserDefaults standardUserDefaults] stringForKey:@"iTunesConnectUsername"];
-		NSString *password = [SFHFKeychainUtils getPasswordForUsername:username
-														andServiceName:@"omz:software AppSales Mobile Service"
-																 error:NULL];
+		NSString *password = (username ?
+							  [SFHFKeychainUtils getPasswordForUsername:username
+														 andServiceName:@"omz:software AppSales Mobile Service"
+																  error:NULL] :
+							  nil);
 		if (!username || !password || [username isEqual:@""] || [password isEqual:@""]) {
 			UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Username / Password Missing",nil) message:NSLocalizedString(@"Please enter a username and a password in the settings.",nil) delegate:nil cancelButtonTitle:NSLocalizedString(@"OK",nil) otherButtonTitles:nil] autorelease];
 			[alert show];

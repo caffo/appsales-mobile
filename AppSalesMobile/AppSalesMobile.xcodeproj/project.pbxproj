@@ -14,6 +14,7 @@
 		2892E4100DC94CBA00A64D0F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2892E40F0DC94CBA00A64D0F /* CoreGraphics.framework */; };
 		28AD73600D9D9599002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD735F0D9D9599002E5188 /* MainWindow.xib */; };
 		28C286E10D94DF7D0034E888 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C286E00D94DF7D0034E888 /* RootViewController.m */; };
+		345D1A480F3174DC002AB336 /* AbstractDayOrWeekController.m in Sources */ = {isa = PBXBuildFile; fileRef = 345D1A470F3174DC002AB336 /* AbstractDayOrWeekController.m */; };
 		34DCF08F0F0461A2009F9929 /* SFHFKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 34DCF08D0F0461A2009F9929 /* SFHFKeychainUtils.m */; };
 		7F1345710EC6D7940050D5F2 /* SettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7F1345700EC6D7940050D5F2 /* SettingsViewController.xib */; };
 		7F1345A10EC6DAE00050D5F2 /* RootViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7F1345A00EC6DAE00050D5F2 /* RootViewController.xib */; };
@@ -282,6 +283,8 @@
 		28C286DF0D94DF7D0034E888 /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
 		28C286E00D94DF7D0034E888 /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		345D1A460F3174DC002AB336 /* AbstractDayOrWeekController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDayOrWeekController.h; sourceTree = "<group>"; };
+		345D1A470F3174DC002AB336 /* AbstractDayOrWeekController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AbstractDayOrWeekController.m; sourceTree = "<group>"; };
 		34DCF08D0F0461A2009F9929 /* SFHFKeychainUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFHFKeychainUtils.m; sourceTree = "<group>"; };
 		34DCF08E0F0461A2009F9929 /* SFHFKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFHFKeychainUtils.h; sourceTree = "<group>"; };
 		7F1345720EC6D7990050D5F2 /* German */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = German; path = German.lproj/SettingsViewController.xib; sourceTree = "<group>"; };
@@ -692,6 +695,8 @@
 				28C286E00D94DF7D0034E888 /* RootViewController.m */,
 				7FB0C5990EBA3680005E2C45 /* SettingsViewController.h */,
 				7FB0C59A0EBA3680005E2C45 /* SettingsViewController.m */,
+				345D1A460F3174DC002AB336 /* AbstractDayOrWeekController.h */,
+				345D1A470F3174DC002AB336 /* AbstractDayOrWeekController.m */,
 				7FB0C62D0EBA43BC005E2C45 /* DaysController.h */,
 				7FB0C62E0EBA43BC005E2C45 /* DaysController.m */,
 				7FB0C7040EBA8348005E2C45 /* WeeksController.h */,
@@ -1290,6 +1295,7 @@
 				7F29EA630ED861CE0018C18A /* HelpBrowser.m in Sources */,
 				7F81F8AE0EE2557D00052E7A /* ProductCell.m in Sources */,
 				34DCF08F0F0461A2009F9929 /* SFHFKeychainUtils.m in Sources */,
+				345D1A480F3174DC002AB336 /* AbstractDayOrWeekController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

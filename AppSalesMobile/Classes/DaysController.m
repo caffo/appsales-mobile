@@ -33,7 +33,7 @@
 #import "DayCell.h"
 #import "CountriesController.h"
 #import "RootViewController.h"
-
+#import "CurrencyManager.h"
 
 @implementation DaysController
 
@@ -49,45 +49,6 @@
 	return self;
 }
 
-- (void)viewDidLoad
-{
-	self.tableView.rowHeight = 45.0;
-}
-
-- (void)reload
-{
-	[self.tableView reloadData];
-}
-
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-	if ([self.daysByMonth count] == 0)
-		return @"";
-	
-	Day *firstDayInSection = [[daysByMonth objectAtIndex:section] objectAtIndex:0];
-	NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-	[dateFormatter setDateFormat:@"MMMM yyyy"];
-	return [dateFormatter stringFromDate:firstDayInSection.date];
-}
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView 
-{
-	if ([self.daysByMonth count] > 1)
-		return [self.daysByMonth count];
-	else
-		return 1;
-}
-
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section 
-{
-	if ([self.daysByMonth count] > 0) {
-		return [[self.daysByMonth objectAtIndex:section] count];
-	}
-    return 0;
-}
-
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath 
 {
     static NSString *CellIdentifier = @"Cell";
@@ -102,7 +63,6 @@
 	
     return cell;
 }
-
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath 
 {
@@ -128,31 +88,11 @@
 	[[self navigationController] pushViewController:countriesController animated:YES];
 }
 
-
-
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath 
-{    
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-		int section = [indexPath section];
-		int row = [indexPath row];
-		NSArray *selectedMonth = [self.daysByMonth objectAtIndex:section];
-		Day *selectedDay = [selectedMonth objectAtIndex:row];
-		
-		[rootViewController deleteDay:selectedDay];
-	}
-}
-
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath 
-{
-    return YES;
-}
-
 - (void)dealloc 
 {
 	self.daysByMonth = nil;
     [super dealloc];
 }
-
 
 @end
 

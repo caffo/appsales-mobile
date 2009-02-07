@@ -33,6 +33,7 @@
 #import "WeekCell.h"
 #import "CountriesController.h"
 #import "RootViewController.h"
+#import "CurrencyManager.h"
 
 @implementation WeeksController
 
@@ -54,45 +55,6 @@
     [super dealloc];
 }
 
-- (void)viewDidLoad
-{
-	self.tableView.rowHeight = 45.0;
-}
-
-- (void)reload
-{
-	[self.tableView reloadData];
-}
-
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-	if ([self.daysByMonth count] == 0)
-		return @"";
-	
-	Day *firstDayInSection = [[daysByMonth objectAtIndex:section] objectAtIndex:0];
-	NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-	[dateFormatter setDateFormat:@"MMMM yyyy"];
-	return [dateFormatter stringFromDate:firstDayInSection.date];
-}
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView 
-{
-	if ([self.daysByMonth count] > 1)
-		return [self.daysByMonth count];
-	else
-		return 1;
-}
-
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section 
-{
-	if ([self.daysByMonth count] > 0) {
-		return [[self.daysByMonth objectAtIndex:section] count];
-	}
-    return 0;
-}
-
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath 
 {
     static NSString *CellIdentifier = @"Cell";
@@ -101,6 +63,7 @@
     if (cell == nil) {
         cell = [[[WeekCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier] autorelease];
     }
+
 	cell.maxRevenue = self.maxRevenue;
     cell.day = [[self.daysByMonth objectAtIndex:[indexPath section]] objectAtIndex:[indexPath row]];
 	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -140,25 +103,5 @@
 	[[self navigationController] pushViewController:countriesController animated:YES];
 }
 
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath 
-{ 
-	if (editingStyle == UITableViewCellEditingStyleDelete) {
-		//NSLog(@"%@", rootViewController);
-		int section = [indexPath section];
-		int row = [indexPath row];
-		NSArray *selectedMonth = [self.daysByMonth objectAtIndex:section];
-		Day *selectedDay = [selectedMonth objectAtIndex:row];
-		
-		[rootViewController deleteDay:selectedDay];
-	}
-}
-
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath 
-{
-	//enables 'swipe-to-delete'
-	return YES;
-}
-
 
 @end
-

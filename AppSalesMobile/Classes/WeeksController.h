@@ -29,19 +29,10 @@
  */
 
 #import <UIKit/UIKit.h>
+#import "AbstractDayOrWeekController.h"
 
-@class RootViewController;
+@interface WeeksController : AbstractDayOrWeekController {
 
-@interface WeeksController : UITableViewController {
-
-	IBOutlet RootViewController *rootViewController;
-	NSMutableArray *daysByMonth;
-	float maxRevenue;
 }
-
-@property (nonatomic, retain) NSMutableArray *daysByMonth;
-@property (assign) float maxRevenue;
-
-- (void)reload;
 
 @end
