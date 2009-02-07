@@ -36,12 +36,15 @@
 	NSDate *lastRefresh;
 	BOOL isRefreshing;
 	NSArray *availableCurrencies;
+	
+	NSMutableDictionary *conversionDict;
 }
 
 @property (retain) NSString *baseCurrency;
-@property (retain) NSDate *lastRefresh;
+@property (nonatomic, retain) NSDate *lastRefresh;
 @property (retain) NSMutableDictionary *exchangeRates;
 @property (retain) NSArray *availableCurrencies;
+@property (retain) NSMutableDictionary *conversionDict;
 
 + (CurrencyManager *)sharedManager;
 - (NSString *)baseCurrencyDescription;

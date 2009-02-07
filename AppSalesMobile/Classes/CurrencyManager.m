@@ -37,6 +37,7 @@
 @synthesize lastRefresh;
 @synthesize exchangeRates;
 @synthesize availableCurrencies;
+@synthesize conversionDict;
 
 - (id)init
 {
@@ -110,12 +111,16 @@
 		[exchangeRates setObject:[NSNumber numberWithFloat:0.0764] forKey:@"\"ZAR to EUR\""];
 		[self refreshIfNeeded];
 	}
+
+	self.conversionDict = [[NSMutableDictionary alloc] init];
 		
 	return self;
 }
 
 - (void)setBaseCurrency:(NSString *)newBaseCurrency
 {
+	[self.conversionDict removeAllObjects];
+	
 	[newBaseCurrency retain];
 	[baseCurrency release];
 	baseCurrency = newBaseCurrency;
@@ -156,6 +161,7 @@
 - (void)refreshFailed
 {
 	isRefreshing = NO;
+	[self.conversionDict removeAllObjects];
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"CurrencyManagerError" object:self];
 }
 
@@ -165,7 +171,9 @@
 	isRefreshing = NO;
 	self.lastRefresh = [NSDate date];
 	//NSLog(@"%@", self.exchangeRates);
-	
+
+	[self.conversionDict removeAllObjects];
+
 	[[NSUserDefaults standardUserDefaults] setObject:self.exchangeRates forKey:@"CurrencyManagerExchangeRates"];
 	[[NSUserDefaults standardUserDefaults] setObject:self.lastRefresh forKey:@"CurrencyManagerLastRefresh"];
 	
@@ -214,24 +222,38 @@
 
 - (float)convertValue:(float)sourceValue fromCurrency:(NSString *)sourceCurrency
 {
-	if (([sourceCurrency isEqual:@"EUR"]) && ([self.baseCurrency isEqual:@"EUR"]))
+	/* short-circuit if the source is the same as the destination */
+	if ([sourceCurrency isEqualToString:self.baseCurrency])
 		return sourceValue;
-	
-	NSNumber *conversionRateEuroNumber = [exchangeRates objectForKey:[NSString stringWithFormat:@"\"%@ to EUR\"", sourceCurrency]];
-	if (!conversionRateEuroNumber) {
-		//NSLog(@"Error: Currency code not found or exchange rates not downloaded yet");
-		return 0.0;
+
+	NSNumber *conversionFromSourceCurrency = [self.conversionDict objectForKey:sourceCurrency];
+	float conversionFactor;
+
+	if (conversionFromSourceCurrency) {
+		conversionFactor = [conversionFromSourceCurrency floatValue];
+
+	} else {
+		/* Convert to euros, our universal common factor */
+		NSNumber *conversionRateEuroNumber = [exchangeRates objectForKey:[NSString stringWithFormat:@"\"%@ to EUR\"", sourceCurrency]];
+		if (!conversionRateEuroNumber) {
+			//NSLog(@"Error: Currency code not found or exchange rates not downloaded yet");
+			return 0.0;
+		}	
+		
+		conversionFactor = [conversionRateEuroNumber floatValue];
+		if (![self.baseCurrency isEqualToString:@"EUR"]) {
+			/* If the destination currency isn't euros, convert euros to our destination currency.
+			 * The exchangeRates stores X to EUR, so we divide by the conversion rate to go EUR to X.
+			 */
+			NSNumber *conversionRateBaseCurrencyNumber = [exchangeRates objectForKey:[NSString stringWithFormat:@"\"%@ to EUR\"", self.baseCurrency]];
+			conversionFactor /= [conversionRateBaseCurrencyNumber floatValue];
+		}
+		
+		/* Cache this conversion for next time */
+		[self.conversionDict setObject:[NSNumber numberWithFloat:conversionFactor] forKey:sourceCurrency];
 	}
-	float conversionRateEuro = [conversionRateEuroNumber floatValue];
-	float valueInEuro = sourceValue * conversionRateEuro;
-	if ([self.baseCurrency isEqual:@"EUR"])
-		return valueInEuro;
 	
-	NSNumber *conversionRateBaseCurrencyNumber = [exchangeRates objectForKey:[NSString stringWithFormat:@"\"%@ to EUR\"", self.baseCurrency]];
-	float conversionRateBaseCurrency = [conversionRateBaseCurrencyNumber floatValue];
-	float valueInBaseCurrency = valueInEuro / conversionRateBaseCurrency;
-	
-	return valueInBaseCurrency;
+	return (sourceValue * conversionFactor);
 }
 
 + (CurrencyManager *)sharedManager
@@ -244,6 +266,8 @@
 
 - (void)dealloc
 {
+	self.conversionDict = nil;
+
 	[exchangeRates release];
 	[baseCurrency release];
 	[super dealloc];
