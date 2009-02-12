@@ -54,7 +54,7 @@
 	NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
 	[dateFormatter setDateFormat:@"MMMM yyyy"];
 	
-	NSArray *selectedMonth = [self.daysByMonth objectAtIndex:section];
+	NSArray *selectedMonth = [[[self.daysByMonth objectAtIndex:section] copy] autorelease];
 	float total = 0.0f;
 	for(Day * selectedDay in selectedMonth) {
 		NSArray *children = [selectedDay children];

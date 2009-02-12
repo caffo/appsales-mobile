@@ -17,7 +17,7 @@
 	NSMutableDictionary *sectionTitles;	
 }
 
-@property (nonatomic, retain) NSMutableArray *daysByMonth;
+@property (retain) NSMutableArray *daysByMonth;
 @property (assign) float maxRevenue;
 @property (retain) NSMutableDictionary *sectionTitles;
 
