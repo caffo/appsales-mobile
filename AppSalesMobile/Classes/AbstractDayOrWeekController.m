@@ -23,8 +23,9 @@
 {
 	[super initWithCoder:coder];
 	self.daysByMonth = [NSMutableArray array];
-	self.maxRevenue = 0.1;
+	self.maxRevenue = 0;
 	self.sectionTitles = [NSMutableDictionary dictionary];
+	
 	return self;
 }
 
@@ -37,6 +38,12 @@
 {
 	[sectionTitles removeAllObjects];
 	[self.tableView reloadData];
+
+	/* Immediately determine all section titles; if we don't, Cocoa will be asking us for them, anyways,
+	 * and will do so in arbitrary order. We're better off doing it on our own terms.
+	 */
+	[self performSelectorInBackground:@selector(determineSectionTitles)
+						   withObject:nil];
 }
 
 - (void)didDetermineHeader
@@ -44,11 +51,13 @@
 	[self.tableView reloadData];
 }
 
-- (void)determineHeaderForSection:(NSNumber *)sectionNumber
+/*!
+ * @brief Determine the header for a given section
+ *
+ * Called on a thread. Notifies the main thread to update the display after this section is complete.
+ */
+- (void)determineHeaderForSection:(int)section
 {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	NSInteger section = [sectionNumber integerValue];
-
 	NSString *sectionTitle;
 	Day *firstDayInSection = [[daysByMonth objectAtIndex:section] objectAtIndex:0];
 	NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
@@ -68,11 +77,24 @@
 	NSString *totalRevenueString = [numberFormatter stringFromNumber:[NSNumber numberWithFloat:total]];
 	
 	sectionTitle = [NSString stringWithFormat:@"%@ - %@ %@",[dateFormatter stringFromDate:firstDayInSection.date],totalRevenueString,[[CurrencyManager sharedManager] baseCurrencyDescription]];
-	[self.sectionTitles setObject:sectionTitle forKey:sectionNumber];
-	
+	[self.sectionTitles setObject:sectionTitle forKey:[NSNumber numberWithInt:section]];
+
 	[self performSelectorOnMainThread:@selector(didDetermineHeader)
 						   withObject:nil
 						waitUntilDone:NO];
+}
+
+/*!
+ * @brief Determine all section titles, starting with the first
+ *
+ * This should be called on a new thread
+ */
+- (void)determineSectionTitles
+{
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	for (int i = 0; i < [self.tableView numberOfSections]; i++) {
+		[self determineHeaderForSection:i];
+	}
 	[pool release];
 }
 
@@ -83,15 +105,15 @@
 	
 	NSString *sectionTitle = [sectionTitles objectForKey:[NSNumber numberWithInt:section]];
 	if (!sectionTitle) {
+		/* Just show the date for now. The threaded determineSectionTitles hasn't gotten to this section
+		 * yet, but when it does, the sectionTitles dictionary will be updated and reload called.
+		 */
 		Day *firstDayInSection = [[daysByMonth objectAtIndex:section] objectAtIndex:0];
 		NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
 		[dateFormatter setDateFormat:@"MMMM yyyy"];
 		
 		sectionTitle = [dateFormatter stringFromDate:firstDayInSection.date];
 		[self.sectionTitles setObject:sectionTitle forKey:[NSNumber numberWithInt:section]];
-
-		[self performSelectorInBackground:@selector(determineHeaderForSection:)
-							   withObject:[NSNumber numberWithInt:section]];
 	}
 	
 	return sectionTitle;
