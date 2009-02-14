@@ -42,6 +42,9 @@
 #import "HelpBrowser.h"
 #import "SFHFKeychainUtils.h"
 
+#define LIVE_DAY_MAX_REVENUE_UPDATE_REFRESH_INTERVAL 15
+#define LIVE_WEEK_MAX_REVENUE_UPDATE_REFRESH_INTERVAL 5
+
 @interface RootViewController (Internals)
 
 - (void)importExistingDayData;
@@ -170,31 +173,43 @@
 	}
 }
 
-- (void)refreshMaxDayRevenue
+- (void)refreshMaxDayRevenue:(NSArray *)sortedDays
 {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	float max = 0.1;
-	
-	for (Day *d in [[[self.days allValues] copy] autorelease]) {
+	int checkedSinceUpdate = 0;
+
+	for (Day *d in sortedDays) {
 		float r = [d totalRevenueInBaseCurrency];
-		if (r > max) {
+		if (r > max)
 			max = r;
-		}
+
+		checkedSinceUpdate++;
+		if (checkedSinceUpdate == LIVE_DAY_MAX_REVENUE_UPDATE_REFRESH_INTERVAL) {
+			if (daysController.maxRevenue != max) {
+				daysController.maxRevenue = max;
+				[daysController.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+			}
+			
+			checkedSinceUpdate = 0;
+		}		
 	}
 
-	daysController.maxRevenue = max;
-	[daysController.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
-
+	if (daysController.maxRevenue != max) {
+		daysController.maxRevenue = max;
+		[daysController.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+	}
 	[pool release];
 }
 
 - (void)refreshDayList
 {
-	[self performSelectorInBackground:@selector(refreshMaxDayRevenue) withObject:nil];
-
-	NSMutableArray *daysByMonth = [NSMutableArray array];
 	NSSortDescriptor *dateSorter = [[[NSSortDescriptor alloc] initWithKey:@"date" ascending:NO] autorelease];
 	NSArray *sortedDays = [[days allValues] sortedArrayUsingDescriptors:[NSArray arrayWithObject:dateSorter]];
+
+	[self performSelectorInBackground:@selector(refreshMaxDayRevenue:) withObject:sortedDays];
+
+	NSMutableArray *daysByMonth = [NSMutableArray array];
 	int lastMonth = -1;
 	for (Day *d in sortedDays) {
 		NSDate *date = d.date;
@@ -212,29 +227,45 @@
 	[tableView reloadData];
 }
 
-- (void)refreshMaxWeekRevenue
+- (void)refreshMaxWeekRevenue:(NSArray *)sortedWeeks
 {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
 	float max = 0.1;
-	for (Day *w in [[[self.weeks allValues] copy] autorelease]) {
+	int checkedSinceUpdate = 0;
+
+	for (Day *w in sortedWeeks) {
 		float r = [w totalRevenueInBaseCurrency];
+
 		if (r > max)
 			max = r;
+			
+		checkedSinceUpdate++;
+		if (checkedSinceUpdate == LIVE_WEEK_MAX_REVENUE_UPDATE_REFRESH_INTERVAL) {
+			if (weeksController.maxRevenue != max) {
+				weeksController.maxRevenue = max;
+				[weeksController.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];				
+			}
+			checkedSinceUpdate = 0;
+		}
 	}
-	weeksController.maxRevenue = max;
-	[weeksController.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
-	
+
+	if (weeksController.maxRevenue != max) {
+		weeksController.maxRevenue = max;
+		[weeksController.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];				
+	}
+
 	[pool release];
 }
 
 - (void)refreshWeekList
 {
-	[self performSelectorInBackground:@selector(refreshMaxWeekRevenue) withObject:nil];
-	
-	NSMutableArray *daysByMonth = [NSMutableArray array];
 	NSSortDescriptor *dateSorter = [[[NSSortDescriptor alloc] initWithKey:@"date" ascending:NO] autorelease];
 	NSArray *sortedDays = [[weeks allValues] sortedArrayUsingDescriptors:[NSArray arrayWithObject:dateSorter]];
+
+	[self performSelectorInBackground:@selector(refreshMaxWeekRevenue:) withObject:sortedDays];
+	
+	NSMutableArray *daysByMonth = [NSMutableArray array];
 	int lastMonth = -1;
 	for (Day *d in sortedDays) {
 		NSDate *date = d.date;
