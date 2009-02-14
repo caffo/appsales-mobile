@@ -45,7 +45,7 @@
 {
 	[super initWithCoder:coder];
 	self.daysByMonth = [NSMutableArray array];
-	self.maxRevenue = 0.1;
+	self.maxRevenue = 0;
 	return self;
 }
 
