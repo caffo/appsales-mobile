@@ -61,13 +61,15 @@
 	self.days = [NSMutableDictionary dictionary];
 	self.weeks = [NSMutableDictionary dictionary];
 	
-	NSArray *filenames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[self docPath] error:NULL];
+	NSString *docPath = [self docPath];
+	NSArray *filenames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:docPath error:NULL];
 	
 	for (NSString *filename in filenames) {
 		if (![[filename pathExtension] isEqual:@"dat"])
 			continue;
-		NSString *fullPath = [[self docPath] stringByAppendingPathComponent:filename];
-		Day *loadedDay = [NSKeyedUnarchiver unarchiveObjectWithFile:fullPath];
+		
+		Day *loadedDay = [Day dayFromFile:filename atPath:docPath];
+
 		if (loadedDay != nil) {
 			if (loadedDay.isWeek)
 				[self.weeks setObject:loadedDay forKey:[loadedDay name]];
@@ -168,16 +170,28 @@
 	}
 }
 
+- (void)refreshMaxDayRevenue
+{
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	float max = 0.1;
+	
+	for (Day *d in [[[self.days allValues] copy] autorelease]) {
+		float r = [d totalRevenueInBaseCurrency];
+		if (r > max) {
+			max = r;
+		}
+	}
+
+	daysController.maxRevenue = max;
+	[daysController.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+
+	[pool release];
+}
+
 - (void)refreshDayList
 {
-	float max = 0.1;
-	for (Day *d in [days allValues]) {
-		float r = [d totalRevenueInBaseCurrency];
-		if (r > max)
-			max = r;
-	}
-	daysController.maxRevenue = max;
-	
+	[self performSelectorInBackground:@selector(refreshMaxDayRevenue) withObject:nil];
+
 	NSMutableArray *daysByMonth = [NSMutableArray array];
 	NSSortDescriptor *dateSorter = [[[NSSortDescriptor alloc] initWithKey:@"date" ascending:NO] autorelease];
 	NSArray *sortedDays = [[days allValues] sortedArrayUsingDescriptors:[NSArray arrayWithObject:dateSorter]];
@@ -198,15 +212,25 @@
 	[tableView reloadData];
 }
 
-- (void)refreshWeekList
+- (void)refreshMaxWeekRevenue
 {
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
 	float max = 0.1;
-	for (Day *w in [weeks allValues]) {
+	for (Day *w in [[[self.weeks allValues] copy] autorelease]) {
 		float r = [w totalRevenueInBaseCurrency];
 		if (r > max)
 			max = r;
 	}
 	weeksController.maxRevenue = max;
+	[weeksController.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+	
+	[pool release];
+}
+
+- (void)refreshWeekList
+{
+	[self performSelectorInBackground:@selector(refreshMaxWeekRevenue) withObject:nil];
 	
 	NSMutableArray *daysByMonth = [NSMutableArray array];
 	NSSortDescriptor *dateSorter = [[[NSSortDescriptor alloc] initWithKey:@"date" ascending:NO] autorelease];
