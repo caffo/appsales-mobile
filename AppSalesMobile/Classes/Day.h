@@ -32,6 +32,7 @@
 @class Country;
 
 @interface Day : NSObject {
+	NSLock *lock_countries;
 	NSMutableDictionary *countries;
 	NSDate *date;
 	NSString *cachedWeekEndDateString;
@@ -39,9 +40,12 @@
 	NSString *cachedDayString;
 	BOOL isWeek;
 	BOOL wasLoadedFromDisk;
+	NSString *pathOnDisk;
+		
 	NSString *name;
 }
 
+@property (retain) NSLock *lock_countries;
 @property (retain) NSDate *date;
 @property (retain) NSMutableDictionary *countries;
 @property (retain) NSString *cachedWeekEndDateString;
@@ -50,6 +54,9 @@
 @property (assign) BOOL isWeek;
 @property (assign) BOOL wasLoadedFromDisk;
 @property (retain) NSString *name;
+@property (retain) NSString *pathOnDisk;
+
++ (Day *)dayFromFile:(NSString *)filename atPath:(NSString *)docPath;
 
 - (id)initWithCSV:(NSString *)csv;
 - (Country *)countryNamed:(NSString *)countryName;

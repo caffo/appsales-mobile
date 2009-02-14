@@ -43,10 +43,20 @@
 @synthesize isWeek;
 @synthesize wasLoadedFromDisk;
 @synthesize name;
+@synthesize pathOnDisk;
+@synthesize lock_countries;;
 
+- (id)init
+{
+	if ((self = [super init])) {
+		self.lock_countries = [[[NSLock alloc] init] autorelease];
+	}
+	
+	return self;
+}
 - (id)initWithCSV:(NSString *)csv
 {
-	[super init];
+	[self init];
 	
 	self.wasLoadedFromDisk = NO;
 	
@@ -98,16 +108,65 @@
 	return self;
 }
 
+static BOOL shouldLoadCountries = YES;
+
 - (id)initWithCoder:(NSCoder *)coder
 {
-	[super init];
-	self.countries = [coder decodeObjectForKey:@"countries"];
+	[self init];
+
 	self.date = [coder decodeObjectForKey:@"date"];
 	self.isWeek = [coder decodeBoolForKey:@"isWeek"];
 	self.name = [coder decodeObjectForKey:@"name"];
+	
+	/* 
+	 * shouldLoadCountries will be set to NO if we're loading via dayFromFile:atPath:
+	 * This allows us to skip the costly part of loading until countries is actually accessed, at which
+	 * point a new Day object will be loaded from disk at the same path and load its countries. We'll
+	 * then assign countries to that Day object's countries.
+	 */
+	if (shouldLoadCountries)
+		self.countries = [coder decodeObjectForKey:@"countries"];
+
 	self.wasLoadedFromDisk = YES;
 	
 	return self;
+}
+
++ (Day *)dayFromFile:(NSString *)filename atPath:(NSString *)docPath;
+{
+	NSString *fullPath = [docPath stringByAppendingPathComponent:filename];	
+	
+	shouldLoadCountries = NO;
+	Day *loadedDay = [NSKeyedUnarchiver unarchiveObjectWithFile:fullPath];
+	shouldLoadCountries = YES;
+	
+	/* Will load the countries (and the entries they contain) lazily as necessary from fullPath */
+	loadedDay.pathOnDisk = fullPath;
+
+	return loadedDay;
+}
+
+- (NSMutableDictionary *)countries
+{	
+	if (self.pathOnDisk && !countries) {
+		[lock_countries lock];
+		/* Countries may have been assigned while the lock was being acquired, on another thread.
+		 * Note that we can't depend upon the atomicity of properties here because we're assigning the property
+		 * being accessed from within the accessor (lazy assignment).
+		 */
+		if (!countries) {
+			countries = [((Day *)[NSKeyedUnarchiver unarchiveObjectWithFile:self.pathOnDisk]).countries retain];
+			self.pathOnDisk = nil;
+			if (self.isWeek) {
+				NSLog(@"Week %@: %@", self.name, [self totalRevenueString]);
+			} else {
+				NSLog(@"Day %@: %@", self.name, [self totalRevenueString]);
+			}
+		}
+		[lock_countries unlock];
+	}
+
+	return countries;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder
@@ -282,7 +341,9 @@
 	self.countries = nil;
 	self.date = nil;
 	self.name = nil;
-	
+	self.pathOnDisk = nil;
+	self.lock_countries = nil;
+
 	[super dealloc];
 }
 
