@@ -83,7 +83,7 @@
 		[self.contentView addSubview:graphView];
 		[self.contentView addSubview:detailsLabel];
 		
-		self.maxRevenue = 1.0;
+		self.maxRevenue = 0;
     }
     return self;
 }
@@ -104,7 +104,9 @@
 	
 	dayLabel.textColor = [self.day weekdayColor];
 	weekdayLabel.textColor = [self.day weekdayColor];
-	graphView.frame = CGRectMake(160, 4, 130.0 * ([self.day totalRevenueInBaseCurrency] / self.maxRevenue), 21);
+	graphView.frame = CGRectMake(160, 4, 130.0 * (self.maxRevenue ?
+												  ([self.day totalRevenueInBaseCurrency] / self.maxRevenue) :
+												  0), 21);
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated 
