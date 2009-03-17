@@ -269,23 +269,13 @@ static BOOL shouldLoadCountries = YES;
 
 - (NSString *)weekdayString
 {
-	NSDateComponents *components = [[NSCalendar currentCalendar] components:NSWeekdayCalendarUnit fromDate:self.date];
-	int weekday = [components weekday];
-	if (weekday == 1)
-		return NSLocalizedString(@"SUN",nil);
-	if (weekday == 2)
-		return NSLocalizedString(@"MON",nil);
-	if (weekday == 3)
-		return NSLocalizedString(@"TUE",nil);
-	if (weekday == 4)
-		return NSLocalizedString(@"WED",nil);
-	if (weekday == 5)
-		return NSLocalizedString(@"THU",nil);
-	if (weekday == 6)
-		return NSLocalizedString(@"FRI",nil);
-	if (weekday == 7)
-		return NSLocalizedString(@"SAT",nil);
-	return @"---";
+	static NSDateFormatter *dateFormatter = nil;
+	if (!dateFormatter) {
+		dateFormatter = [[NSDateFormatter alloc] init];
+		dateFormatter.dateFormat = @"EEE";
+	}
+	
+	return [[dateFormatter stringFromDate:self.date] uppercaseString];
 }
 
 - (UIColor *)weekdayColor
