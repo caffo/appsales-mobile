@@ -58,14 +58,17 @@
  */
 - (void)determineHeaderForSection:(int)section
 {
-	if (section > (daysByMonth.count-1)) return;
+	if (section > (self.daysByMonth.count-1)) return;
 
 	NSString *sectionTitle;
-	Day *firstDayInSection = [[daysByMonth objectAtIndex:section] objectAtIndex:0];
+	NSArray *selectedMonth = [[[self.daysByMonth objectAtIndex:section] copy] autorelease];
+
+	if (selectedMonth.count == 0) return;
+	
+	Day *firstDayInSection = [selectedMonth objectAtIndex:0];
 	NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
 	[dateFormatter setDateFormat:@"MMMM yyyy"];
 	
-	NSArray *selectedMonth = [[[self.daysByMonth objectAtIndex:section] copy] autorelease];
 	float total = 0.0f;
 	for(Day * selectedDay in selectedMonth) {
 		NSArray *children = [selectedDay children];
