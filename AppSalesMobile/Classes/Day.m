@@ -157,11 +157,13 @@ static BOOL shouldLoadCountries = YES;
 		if (!countries) {
 			countries = [((Day *)[NSKeyedUnarchiver unarchiveObjectWithFile:self.pathOnDisk]).countries retain];
 			self.pathOnDisk = nil;
+			/*
 			if (self.isWeek) {
 				NSLog(@"Week %@: %@", self.name, [self totalRevenueString]);
 			} else {
 				NSLog(@"Day %@: %@", self.name, [self totalRevenueString]);
 			}
+			 */
 		}
 		[lock_countries unlock];
 	}
