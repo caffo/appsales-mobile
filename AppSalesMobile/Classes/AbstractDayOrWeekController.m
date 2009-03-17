@@ -58,6 +58,8 @@
  */
 - (void)determineHeaderForSection:(int)section
 {
+	if (section > (daysByMonth.count-1)) return;
+
 	NSString *sectionTitle;
 	Day *firstDayInSection = [[daysByMonth objectAtIndex:section] objectAtIndex:0];
 	NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
@@ -100,7 +102,7 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-	if ([self.daysByMonth count] == 0)
+	if (self.daysByMonth.count == 0)
 		return @"";
 	
 	NSString *sectionTitle = [sectionTitles objectForKey:[NSNumber numberWithInt:section]];
@@ -121,18 +123,17 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView 
 {
-	if ([self.daysByMonth count] > 1)
-		return [self.daysByMonth count];
-	else
-		return 1;
+	NSInteger count = self.daysByMonth.count;
+	return (count > 1 ? count : 1);
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section 
 {
-	if ([self.daysByMonth count] > 0) {
+	if (self.daysByMonth.count > 0) {
 		return [[self.daysByMonth objectAtIndex:section] count];
 	}
+
     return 0;
 }
 
