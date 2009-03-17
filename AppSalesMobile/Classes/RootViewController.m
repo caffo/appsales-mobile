@@ -618,6 +618,8 @@ Day *ImportDayData(NSData *dayData, BOOL compressed) {
 		else
 			[self performSelectorOnMainThread:@selector(successfullyDownloadedWeeks:) withObject:downloadedDays waitUntilDone:YES];
 	}
+
+	[pool release];
 }
 
 - (IBAction)downloadReports:(id)sender
