@@ -106,7 +106,7 @@
 	NSString *details = [NSString stringWithFormat:@"%@ × %@", [productInfo objectForKey:@"units"], [productInfo objectForKey:@"name"]];
 	detailsLabel.text = details;
 	
-	revenueLabel.text = [NSString stringWithFormat:@"%@ %@", [revenueFormatter stringFromNumber:[productInfo objectForKey:@"revenue"]], [[CurrencyManager sharedManager] baseCurrencyDescription]];
+	revenueLabel.text = [[CurrencyManager sharedManager] baseCurrencyDescriptionForAmount:[revenueFormatter stringFromNumber:[productInfo objectForKey:@"revenue"]]];
 	
 	float revenue = [[productInfo objectForKey:@"revenue"] floatValue];
 	float percent;

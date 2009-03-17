@@ -58,12 +58,13 @@
  */
 - (void)determineHeaderForSection:(int)section
 {
-	if (section > (self.daysByMonth.count-1)) return;
-
 	NSString *sectionTitle;
-	NSArray *selectedMonth = [[[self.daysByMonth objectAtIndex:section] copy] autorelease];
+	NSArray *selectedMonth = ((section > (self.daysByMonth.count-1)) ?
+							  [[[self.daysByMonth objectAtIndex:section] copy] autorelease] :
+							   nil);
 
-	if (selectedMonth.count == 0) return;
+	if (!selectedMonth ||
+		selectedMonth.count == 0) return;
 	
 	Day *firstDayInSection = [selectedMonth objectAtIndex:0];
 	NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
@@ -81,7 +82,7 @@
 	[numberFormatter setMinimumIntegerDigits:1];
 	NSString *totalRevenueString = [numberFormatter stringFromNumber:[NSNumber numberWithFloat:total]];
 	
-	sectionTitle = [NSString stringWithFormat:@"%@ - %@ %@",[dateFormatter stringFromDate:firstDayInSection.date],totalRevenueString,[[CurrencyManager sharedManager] baseCurrencyDescription]];
+	sectionTitle = [NSString stringWithFormat:@"%@ - %@",[dateFormatter stringFromDate:firstDayInSection.date],[[CurrencyManager sharedManager] baseCurrencyDescriptionForAmount:totalRevenueString]];
 	[self.sectionTitles setObject:sectionTitle forKey:[NSNumber numberWithInt:section]];
 
 	[self performSelectorOnMainThread:@selector(didDetermineHeader)
@@ -113,7 +114,11 @@
 		/* Just show the date for now. The threaded determineSectionTitles hasn't gotten to this section
 		 * yet, but when it does, the sectionTitles dictionary will be updated and reload called.
 		 */
-		Day *firstDayInSection = [[daysByMonth objectAtIndex:section] objectAtIndex:0];
+		NSArray *sectionArray = [daysByMonth objectAtIndex:section];
+		if (sectionArray.count == 0)
+			return @"";
+
+		Day *firstDayInSection = [sectionArray objectAtIndex:0];
 		NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
 		[dateFormatter setDateFormat:@"MMMM yyyy"];
 		

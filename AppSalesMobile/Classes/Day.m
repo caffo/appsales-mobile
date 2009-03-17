@@ -257,7 +257,7 @@ static BOOL shouldLoadCountries = YES;
 	[numberFormatter setMaximumFractionDigits:2];
 	[numberFormatter setMinimumIntegerDigits:1];
 	NSString *totalRevenueString = [numberFormatter stringFromNumber:[NSNumber numberWithFloat:[self totalRevenueInBaseCurrency]]];
-	return [NSString stringWithFormat:@"%@ %@", totalRevenueString, [[CurrencyManager sharedManager] baseCurrencyDescription]];
+	return [[CurrencyManager sharedManager] baseCurrencyDescriptionForAmount:totalRevenueString];
 }
 
 - (NSString *)dayString
