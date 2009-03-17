@@ -133,14 +133,23 @@
 {
 	if ([baseCurrency isEqual:@"EUR"])
 		return @"€";
-	if ([baseCurrency isEqual:@"USD"])
+	else if ([baseCurrency isEqual:@"USD"])
 		return @"$";
-	if ([baseCurrency isEqual:@"JPY"])
+	else if ([baseCurrency isEqual:@"JPY"])
 		return @"¥";
-	if ([baseCurrency isEqual:@"GBP"])
+	else if ([baseCurrency isEqual:@"GBP"])
 		return @"£";
 	
 	return baseCurrency;
+}
+
+- (NSString *)baseCurrencyDescriptionForAmount:(NSString *)amount
+{
+	if ([baseCurrency isEqual:@"USD"]) {
+		return [NSString stringWithFormat:@"$%@", amount];
+	} else {
+		return [NSString stringWithFormat:@"%@ %@", amount, [self baseCurrencyDescription]];
+	}
 }
 
 - (void)refreshIfNeeded

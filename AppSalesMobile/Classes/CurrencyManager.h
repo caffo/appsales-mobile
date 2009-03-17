@@ -28,7 +28,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 @interface CurrencyManager : NSObject {
 	
 	NSString *baseCurrency;
@@ -48,6 +47,7 @@
 
 + (CurrencyManager *)sharedManager;
 - (NSString *)baseCurrencyDescription;
+- (NSString *)baseCurrencyDescriptionForAmount:(NSString *)amount;
 - (void)forceRefresh;
 - (void)refreshIfNeeded;
 - (void)refreshExchangeRates;
