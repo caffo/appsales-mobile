@@ -349,7 +349,7 @@ Day *ImportDayData(NSData *dayData, BOOL compressed) {
 		fclose(dest);
 		gzclose(file);
 		
-		NSString *text = [NSString stringWithContentsOfFile:textFile];
+		NSString *text = [NSString stringWithContentsOfFile:textFile encoding:NSUTF8StringEncoding error:NULL];
 		[[NSFileManager defaultManager] removeItemAtPath:zipFile error:NULL];
 		[[NSFileManager defaultManager] removeItemAtPath:textFile error:NULL];
 		return [[[Day alloc] initWithCSV:text] autorelease];
