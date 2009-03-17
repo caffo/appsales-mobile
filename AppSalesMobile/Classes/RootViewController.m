@@ -98,6 +98,9 @@
 		if ([components day] > 1) {
 			[self downloadReports:nil];
 		}
+	} else {
+		/* We've never downloaded before; start a download now */
+		[self downloadReports:nil];	
 	}
 
 	return self;
