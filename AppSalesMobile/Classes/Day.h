@@ -41,7 +41,7 @@
 	BOOL isWeek;
 	BOOL wasLoadedFromDisk;
 	NSString *pathOnDisk;
-		
+	
 	NSString *name;
 }
 
@@ -62,6 +62,8 @@
 - (Country *)countryNamed:(NSString *)countryName;
 - (void)setDateString:(NSString *)dateString;
 - (float)totalRevenueInBaseCurrency;
+- (float)totalRevenueInBaseCurrencyForApp:(NSString *)app;
+- (NSArray *)allProductNames;
 - (NSString *)dayString;
 - (NSString *)weekdayString;
 - (NSString *)weekEndDateString;

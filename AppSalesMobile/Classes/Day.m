@@ -97,11 +97,11 @@
 			
 			Country *country = [self countryNamed:countryString]; //will be created on-the-fly if needed.
 			[[[Entry alloc] initWithProductName:productName 
-											  transactionType:[transactionType intValue] 
-														units:[units intValue] 
-													royalties:[royalties floatValue] 
-													 currency:royaltyCurrency
-													  country:country] autorelease]; //gets added to the countries entry list automatically
+								transactionType:[transactionType intValue] 
+										  units:[units intValue] 
+									  royalties:[royalties floatValue] 
+									   currency:royaltyCurrency
+										country:country] autorelease]; //gets added to the countries entry list automatically
 		}
 	}
 	
@@ -113,7 +113,7 @@ static BOOL shouldLoadCountries = YES;
 - (id)initWithCoder:(NSCoder *)coder
 {
 	[self init];
-
+	
 	self.date = [coder decodeObjectForKey:@"date"];
 	self.isWeek = [coder decodeBoolForKey:@"isWeek"];
 	self.name = [coder decodeObjectForKey:@"name"];
@@ -126,7 +126,7 @@ static BOOL shouldLoadCountries = YES;
 	 */
 	if (shouldLoadCountries)
 		self.countries = [coder decodeObjectForKey:@"countries"];
-
+	
 	self.wasLoadedFromDisk = YES;
 	
 	return self;
@@ -142,7 +142,7 @@ static BOOL shouldLoadCountries = YES;
 	
 	/* Will load the countries (and the entries they contain) lazily as necessary from fullPath */
 	loadedDay.pathOnDisk = fullPath;
-
+	
 	return loadedDay;
 }
 
@@ -157,17 +157,15 @@ static BOOL shouldLoadCountries = YES;
 		if (!countries) {
 			countries = [((Day *)[NSKeyedUnarchiver unarchiveObjectWithFile:self.pathOnDisk]).countries retain];
 			self.pathOnDisk = nil;
-			/*
 			if (self.isWeek) {
-				NSLog(@"Week %@: %@", self.name, [self totalRevenueString]);
+				//NSLog(@"Week %@: %@", self.name, [self totalRevenueString]);
 			} else {
-				NSLog(@"Day %@: %@", self.name, [self totalRevenueString]);
+				//NSLog(@"Day %@: %@", self.name, [self totalRevenueString]);
 			}
-			 */
 		}
 		[lock_countries unlock];
 	}
-
+	
 	return countries;
 }
 
@@ -250,6 +248,26 @@ static BOOL shouldLoadCountries = YES;
 	return sum;
 }
 
+- (float)totalRevenueInBaseCurrencyForApp:(NSString *)app
+{
+	if (app == nil)
+		return [self totalRevenueInBaseCurrency];
+	float sum = 0.0;
+	for (Country *c in [self.countries allValues]) {
+		sum += [c totalRevenueInBaseCurrencyForApp:app];
+	}
+	return sum;
+}
+
+- (NSArray *)allProductNames
+{
+	NSMutableSet *names = [NSMutableSet set];
+	for (Country *c in [self.countries allValues]) {
+		[names addObjectsFromArray:[c allProductNames]];
+	}
+	return [names allObjects];
+}
+
 - (NSString *)totalRevenueString
 {
 	NSNumberFormatter *numberFormatter = [[NSNumberFormatter new] autorelease];
@@ -257,7 +275,7 @@ static BOOL shouldLoadCountries = YES;
 	[numberFormatter setMaximumFractionDigits:2];
 	[numberFormatter setMinimumIntegerDigits:1];
 	NSString *totalRevenueString = [numberFormatter stringFromNumber:[NSNumber numberWithFloat:[self totalRevenueInBaseCurrency]]];
-	return [[CurrencyManager sharedManager] baseCurrencyDescriptionForAmount:totalRevenueString];
+	return [NSString stringWithFormat:@"%@ %@", totalRevenueString, [[CurrencyManager sharedManager] baseCurrencyDescription]];
 }
 
 - (NSString *)dayString
@@ -271,13 +289,23 @@ static BOOL shouldLoadCountries = YES;
 
 - (NSString *)weekdayString
 {
-	static NSDateFormatter *dateFormatter = nil;
-	if (!dateFormatter) {
-		dateFormatter = [[NSDateFormatter alloc] init];
-		dateFormatter.dateFormat = @"EEE";
-	}
-	
-	return [[dateFormatter stringFromDate:self.date] uppercaseString];
+	NSDateComponents *components = [[NSCalendar currentCalendar] components:NSWeekdayCalendarUnit fromDate:self.date];
+	int weekday = [components weekday];
+	if (weekday == 1)
+		return NSLocalizedString(@"SUN",nil);
+	if (weekday == 2)
+		return NSLocalizedString(@"MON",nil);
+	if (weekday == 3)
+		return NSLocalizedString(@"TUE",nil);
+	if (weekday == 4)
+		return NSLocalizedString(@"WED",nil);
+	if (weekday == 5)
+		return NSLocalizedString(@"THU",nil);
+	if (weekday == 6)
+		return NSLocalizedString(@"FRI",nil);
+	if (weekday == 7)
+		return NSLocalizedString(@"SAT",nil);
+	return @"---";
 }
 
 - (UIColor *)weekdayColor
@@ -335,7 +363,7 @@ static BOOL shouldLoadCountries = YES;
 	self.name = nil;
 	self.pathOnDisk = nil;
 	self.lock_countries = nil;
-
+	
 	[super dealloc];
 }
 

@@ -41,6 +41,7 @@
 #import "WeeksController.h"
 #import "HelpBrowser.h"
 #import "SFHFKeychainUtils.h"
+#import "StatisticsViewController.h"
 
 #define LIVE_DAY_MAX_REVENUE_UPDATE_REFRESH_INTERVAL 15
 #define LIVE_WEEK_MAX_REVENUE_UPDATE_REFRESH_INTERVAL 5
@@ -143,7 +144,7 @@
 - (void)viewDidLoad 
 {
     [super viewDidLoad];
-    self.navigationItem.title = @"App Sales";
+    self.navigationItem.title = @"AppSales";
 	progressView.alpha = 0.0;
 	
 	UIButton *footer = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -654,7 +655,7 @@ Day *ImportDayData(NSData *dayData, BOOL compressed) {
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section 
 {
 	if (section == 0)
-		return 2; //daily + weekly
+		return 3; //daily + weekly + statistics
 	else
 		return 2; //settings + about
 }
@@ -664,7 +665,7 @@ Day *ImportDayData(NSData *dayData, BOOL compressed) {
 	if (section == 0)
 		return NSLocalizedString(@"View Reports",nil);
 	else
-		return NSLocalizedString(@"Configuration",nil);
+		return nil; // NSLocalizedString(@"Configuration",nil);
 }
 
 - (UITableViewCell *)tableView:(UITableView *)aTableView cellForRowAtIndexPath:(NSIndexPath *)indexPath 
@@ -735,6 +736,10 @@ Day *ImportDayData(NSData *dayData, BOOL compressed) {
 			cell.text = NSLocalizedString(@"Weekly",nil);
 		}
 	}
+	else if ((row == 2) && (section == 0)) {
+		cell.image = [UIImage imageNamed:@"Statistics.png"];
+		cell.text = NSLocalizedString(@"Graphs",nil);
+	}
 	else if ((row == 0) && (section == 1)) {
 		cell.image = [UIImage imageNamed:@"Settings.png"];
 		cell.text = NSLocalizedString(@"Settings",nil);
@@ -754,12 +759,20 @@ Day *ImportDayData(NSData *dayData, BOOL compressed) {
 		[self refreshDayList];
 		[self.navigationController pushViewController:daysController animated:YES];
 	}
+	else if ((row == 0) && (section == 1)) {
+		[self.navigationController pushViewController:settingsController animated:YES];
+	}
 	else if ((row == 1) && (section == 0)) {
 		[self refreshWeekList];
 		[self.navigationController pushViewController:weeksController animated:YES];
 	}
-	else if ((row == 0) && (section == 1)) {
-		[self.navigationController pushViewController:settingsController animated:YES];
+	else if ((row == 2) && (section == 0)) {
+		StatisticsViewController *statVC = [[StatisticsViewController new] autorelease];
+		NSSortDescriptor *dateSorter = [[[NSSortDescriptor alloc] initWithKey:@"date" ascending:YES] autorelease];
+		NSArray *sortedDays = [[self.days allValues] sortedArrayUsingDescriptors:[NSArray arrayWithObject:dateSorter]];
+		statVC.days = sortedDays;
+		[self.navigationController pushViewController:statVC animated:YES];
+		
 	}
 	else if ((row == 1) && (section == 1)) {
 		HelpBrowser *browser = [[HelpBrowser new] autorelease];

@@ -21,6 +21,10 @@
 		7F17E0570ED4F21E0005D8AF /* CurrencySelectionDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F17E0560ED4F21E0005D8AF /* CurrencySelectionDialog.m */; };
 		7F29EA420ED861B20018C18A /* help in Resources */ = {isa = PBXBuildFile; fileRef = 7F29EA340ED861B20018C18A /* help */; };
 		7F29EA630ED861CE0018C18A /* HelpBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F29EA620ED861CE0018C18A /* HelpBrowser.m */; };
+		7F6BC8930F72869E004EB9EB /* StatisticsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F6BC88C0F72869E004EB9EB /* StatisticsViewController.m */; };
+		7F6BC8940F72869E004EB9EB /* GraphView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F6BC88E0F72869E004EB9EB /* GraphView.m */; };
+		7F6BC8950F72869E004EB9EB /* TrendGraphView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F6BC8900F72869E004EB9EB /* TrendGraphView.m */; };
+		7F6BC8960F72869E004EB9EB /* RegionsGraphView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F6BC8920F72869E004EB9EB /* RegionsGraphView.m */; };
 		7F81F8910EE245ED00052E7A /* Product.png in Resources */ = {isa = PBXBuildFile; fileRef = 7F81F8900EE245ED00052E7A /* Product.png */; };
 		7F81F89D0EE2481100052E7A /* th.png in Resources */ = {isa = PBXBuildFile; fileRef = 7F81F89C0EE2481100052E7A /* th.png */; };
 		7F81F8AE0EE2557D00052E7A /* ProductCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F81F8AD0EE2557D00052E7A /* ProductCell.m */; };
@@ -294,6 +298,14 @@
 		7F29EA340ED861B20018C18A /* help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = help; sourceTree = "<group>"; };
 		7F29EA610ED861CE0018C18A /* HelpBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelpBrowser.h; sourceTree = "<group>"; };
 		7F29EA620ED861CE0018C18A /* HelpBrowser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HelpBrowser.m; sourceTree = "<group>"; };
+		7F6BC88B0F72869E004EB9EB /* StatisticsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatisticsViewController.h; sourceTree = "<group>"; };
+		7F6BC88C0F72869E004EB9EB /* StatisticsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StatisticsViewController.m; sourceTree = "<group>"; };
+		7F6BC88D0F72869E004EB9EB /* GraphView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphView.h; sourceTree = "<group>"; };
+		7F6BC88E0F72869E004EB9EB /* GraphView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GraphView.m; sourceTree = "<group>"; };
+		7F6BC88F0F72869E004EB9EB /* TrendGraphView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrendGraphView.h; sourceTree = "<group>"; };
+		7F6BC8900F72869E004EB9EB /* TrendGraphView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TrendGraphView.m; sourceTree = "<group>"; };
+		7F6BC8910F72869E004EB9EB /* RegionsGraphView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegionsGraphView.h; sourceTree = "<group>"; };
+		7F6BC8920F72869E004EB9EB /* RegionsGraphView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegionsGraphView.m; sourceTree = "<group>"; };
 		7F81F8900EE245ED00052E7A /* Product.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Product.png; sourceTree = "<group>"; };
 		7F81F89C0EE2481100052E7A /* th.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = th.png; sourceTree = "<group>"; };
 		7F81F8AC0EE2557D00052E7A /* ProductCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductCell.h; sourceTree = "<group>"; };
@@ -709,6 +721,14 @@
 				7F17E0560ED4F21E0005D8AF /* CurrencySelectionDialog.m */,
 				7F29EA610ED861CE0018C18A /* HelpBrowser.h */,
 				7F29EA620ED861CE0018C18A /* HelpBrowser.m */,
+				7F6BC88B0F72869E004EB9EB /* StatisticsViewController.h */,
+				7F6BC88C0F72869E004EB9EB /* StatisticsViewController.m */,
+				7F6BC88D0F72869E004EB9EB /* GraphView.h */,
+				7F6BC88E0F72869E004EB9EB /* GraphView.m */,
+				7F6BC88F0F72869E004EB9EB /* TrendGraphView.h */,
+				7F6BC8900F72869E004EB9EB /* TrendGraphView.m */,
+				7F6BC8910F72869E004EB9EB /* RegionsGraphView.h */,
+				7F6BC8920F72869E004EB9EB /* RegionsGraphView.m */,
 			);
 			name = "View Controller";
 			sourceTree = "<group>";
@@ -1296,6 +1316,10 @@
 				7F81F8AE0EE2557D00052E7A /* ProductCell.m in Sources */,
 				34DCF08F0F0461A2009F9929 /* SFHFKeychainUtils.m in Sources */,
 				345D1A480F3174DC002AB336 /* AbstractDayOrWeekController.m in Sources */,
+				7F6BC8930F72869E004EB9EB /* StatisticsViewController.m in Sources */,
+				7F6BC8940F72869E004EB9EB /* GraphView.m in Sources */,
+				7F6BC8950F72869E004EB9EB /* TrendGraphView.m in Sources */,
+				7F6BC8960F72869E004EB9EB /* RegionsGraphView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

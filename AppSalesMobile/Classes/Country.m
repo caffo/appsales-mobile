@@ -101,6 +101,27 @@
 	return sum;
 }
 
+- (float)totalRevenueInBaseCurrencyForApp:(NSString *)app
+{
+	if (app == nil)
+		return [self totalRevenueInBaseCurrency];
+	float sum = 0.0;
+	for (Entry *e in self.entries) {
+		if ([e.productName isEqual:app])
+			sum += [e totalRevenueInBaseCurrency];
+	}
+	return sum;
+}
+
+- (NSArray *)allProductNames
+{
+	NSMutableSet *names = [NSMutableSet set];
+	for (Entry *e in self.entries) {
+		[names addObject:e.productName];
+	}
+	return [names allObjects];
+}
+
 - (NSString *)totalRevenueString
 {
 	NSNumberFormatter *numberFormatter = [[NSNumberFormatter new] autorelease];
@@ -108,7 +129,7 @@
 	[numberFormatter setMaximumFractionDigits:2];
 	[numberFormatter setMinimumIntegerDigits:1];
 	NSString *totalRevenueString = [numberFormatter stringFromNumber:[NSNumber numberWithFloat:[self totalRevenueInBaseCurrency]]];
-	return [[CurrencyManager sharedManager] baseCurrencyDescriptionForAmount:totalRevenueString];
+	return [NSString stringWithFormat:@"%@ %@", totalRevenueString, [[CurrencyManager sharedManager] baseCurrencyDescription]];
 }
 
 - (NSArray *)children
