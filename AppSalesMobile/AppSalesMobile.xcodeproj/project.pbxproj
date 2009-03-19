@@ -25,6 +25,11 @@
 		7F6BC8940F72869E004EB9EB /* GraphView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F6BC88E0F72869E004EB9EB /* GraphView.m */; };
 		7F6BC8950F72869E004EB9EB /* TrendGraphView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F6BC8900F72869E004EB9EB /* TrendGraphView.m */; };
 		7F6BC8960F72869E004EB9EB /* RegionsGraphView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F6BC8920F72869E004EB9EB /* RegionsGraphView.m */; };
+		7F6BC9620F72B4EA004EB9EB /* GraphBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 7F6BC95E0F72B4EA004EB9EB /* GraphBackground.png */; };
+		7F6BC9630F72B4EA004EB9EB /* GraphScrollBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 7F6BC95F0F72B4EA004EB9EB /* GraphScrollBackground.png */; };
+		7F6BC9640F72B4EA004EB9EB /* DateButtonHighlight.png in Resources */ = {isa = PBXBuildFile; fileRef = 7F6BC9600F72B4EA004EB9EB /* DateButtonHighlight.png */; };
+		7F6BC9650F72B4EA004EB9EB /* DateButtonNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = 7F6BC9610F72B4EA004EB9EB /* DateButtonNormal.png */; };
+		7F6BC9710F72B4F7004EB9EB /* Statistics.png in Resources */ = {isa = PBXBuildFile; fileRef = 7F6BC9700F72B4F7004EB9EB /* Statistics.png */; };
 		7F81F8910EE245ED00052E7A /* Product.png in Resources */ = {isa = PBXBuildFile; fileRef = 7F81F8900EE245ED00052E7A /* Product.png */; };
 		7F81F89D0EE2481100052E7A /* th.png in Resources */ = {isa = PBXBuildFile; fileRef = 7F81F89C0EE2481100052E7A /* th.png */; };
 		7F81F8AE0EE2557D00052E7A /* ProductCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F81F8AD0EE2557D00052E7A /* ProductCell.m */; };
@@ -306,6 +311,11 @@
 		7F6BC8900F72869E004EB9EB /* TrendGraphView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TrendGraphView.m; sourceTree = "<group>"; };
 		7F6BC8910F72869E004EB9EB /* RegionsGraphView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegionsGraphView.h; sourceTree = "<group>"; };
 		7F6BC8920F72869E004EB9EB /* RegionsGraphView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegionsGraphView.m; sourceTree = "<group>"; };
+		7F6BC95E0F72B4EA004EB9EB /* GraphBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GraphBackground.png; sourceTree = "<group>"; };
+		7F6BC95F0F72B4EA004EB9EB /* GraphScrollBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GraphScrollBackground.png; sourceTree = "<group>"; };
+		7F6BC9600F72B4EA004EB9EB /* DateButtonHighlight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DateButtonHighlight.png; sourceTree = "<group>"; };
+		7F6BC9610F72B4EA004EB9EB /* DateButtonNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DateButtonNormal.png; sourceTree = "<group>"; };
+		7F6BC9700F72B4F7004EB9EB /* Statistics.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Statistics.png; sourceTree = "<group>"; };
 		7F81F8900EE245ED00052E7A /* Product.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Product.png; sourceTree = "<group>"; };
 		7F81F89C0EE2481100052E7A /* th.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = th.png; sourceTree = "<group>"; };
 		7F81F8AC0EE2557D00052E7A /* ProductCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductCell.h; sourceTree = "<group>"; };
@@ -640,6 +650,10 @@
 				7F29EA340ED861B20018C18A /* help */,
 				7F9AEDDF0EC64DE700D5C88D /* Icon.png */,
 				7FB0C3F00EB97329005E2C45 /* Default.png */,
+				7F6BC95E0F72B4EA004EB9EB /* GraphBackground.png */,
+				7F6BC95F0F72B4EA004EB9EB /* GraphScrollBackground.png */,
+				7F6BC9600F72B4EA004EB9EB /* DateButtonHighlight.png */,
+				7F6BC9610F72B4EA004EB9EB /* DateButtonNormal.png */,
 				7F1345480EC6D4530050D5F2 /* Transaction Icons */,
 				7F1345490EC6D4630050D5F2 /* Toolbar Icons */,
 				7FB0C9530EBBA8D6005E2C45 /* Flag Icons */,
@@ -689,6 +703,7 @@
 				7FB0C63E0EBA455F005E2C45 /* Weekly.png */,
 				7FB0C6400EBA455F005E2C45 /* Settings.png */,
 				7FB0CB8C0EBBC026005E2C45 /* About.png */,
+				7F6BC9700F72B4F7004EB9EB /* Statistics.png */,
 			);
 			name = "Navigation Icons";
 			sourceTree = "<group>";
@@ -1284,6 +1299,11 @@
 				7F81F8910EE245ED00052E7A /* Product.png in Resources */,
 				7F81F89D0EE2481100052E7A /* th.png in Resources */,
 				7FA7ECC20EE437C400C1954E /* Localizable.strings in Resources */,
+				7F6BC9620F72B4EA004EB9EB /* GraphBackground.png in Resources */,
+				7F6BC9630F72B4EA004EB9EB /* GraphScrollBackground.png in Resources */,
+				7F6BC9640F72B4EA004EB9EB /* DateButtonHighlight.png in Resources */,
+				7F6BC9650F72B4EA004EB9EB /* DateButtonNormal.png in Resources */,
+				7F6BC9710F72B4F7004EB9EB /* Statistics.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
