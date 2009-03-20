@@ -37,6 +37,8 @@
 	NSArray *availableCurrencies;
 	
 	NSMutableDictionary *conversionDict;
+	NSNumberFormatter *numberFormatterWithFraction;
+	NSNumberFormatter *numberFormatterWithoutFraction;
 }
 
 @property (retain) NSString *baseCurrency;

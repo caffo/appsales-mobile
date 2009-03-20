@@ -43,6 +43,16 @@
 {
 	[super init];
 	
+	numberFormatterWithFraction = [NSNumberFormatter new];
+	[numberFormatterWithFraction setMinimumFractionDigits:2];
+	[numberFormatterWithFraction setMaximumFractionDigits:2];
+	[numberFormatterWithFraction setMinimumIntegerDigits:1];
+	
+	numberFormatterWithoutFraction = [NSNumberFormatter new];
+	[numberFormatterWithoutFraction setMinimumFractionDigits:0];
+	[numberFormatterWithoutFraction setMaximumFractionDigits:0];
+	[numberFormatterWithoutFraction setMinimumIntegerDigits:1];
+		
 	self.availableCurrencies = [NSArray arrayWithObjects:
 								  @"USD", @"AUD", @"BHD", @"THB", @"BND", 
 								  @"CLP", @"DKK", @"EUR", @"HUF", @"HKD", @"ISK", @"CAD", 
@@ -154,15 +164,7 @@
 
 - (NSString *)baseCurrencyDescriptionForAmount:(NSNumber *)amount withFraction:(BOOL)withFraction
 {
-	NSUInteger fractionDigits = 2;
-	if (! withFraction)
-	{
-		fractionDigits = 0;
-	}
-	NSNumberFormatter *numberFormatter = [[NSNumberFormatter new] autorelease];
-	[numberFormatter setMinimumFractionDigits:fractionDigits];
-	[numberFormatter setMaximumFractionDigits:fractionDigits];
-	[numberFormatter setMinimumIntegerDigits:1];
+	NSNumberFormatter *numberFormatter = (withFraction) ? (numberFormatterWithFraction) : (numberFormatterWithoutFraction);
 	NSString *formattedAmount = [numberFormatter stringFromNumber:amount];
 	return [self baseCurrencyDescriptionForAmount:formattedAmount];
 }
@@ -292,6 +294,9 @@
 {
 	self.conversionDict = nil;
 
+	[numberFormatterWithFraction release];
+	[numberFormatterWithoutFraction release];
+	
 	[exchangeRates release];
 	[baseCurrency release];
 	[super dealloc];
