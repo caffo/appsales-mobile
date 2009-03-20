@@ -145,7 +145,7 @@
 	
 	//draw title:
 	[[UIColor darkGrayColor] set];
-	NSString *caption = [NSString stringWithFormat:NSLocalizedString(@"Regions (%i days, ∑ = %i %@)",nil), [self.days count], (int)totalRevenue, [[CurrencyManager sharedManager] baseCurrencyDescription]];
+	NSString *caption = [NSString stringWithFormat:NSLocalizedString(@"Regions (%i days, ∑ = %@)",nil), [self.days count], [[CurrencyManager sharedManager] baseCurrencyDescriptionForAmount:[NSNumber numberWithFloat:totalRevenue] withFraction:YES]];
 	[caption drawInRect:CGRectMake(10, 10, 300, 20) withFont:[UIFont boldSystemFontOfSize:12.0] lineBreakMode:UILineBreakModeCharacterWrap alignment:UITextAlignmentCenter];
 	float maxX = 305.0;
 	float minX = 15.0;
@@ -216,7 +216,9 @@
 		[[UIColor whiteColor] set];
 		[region drawInRect:CGRectMake(legendFrame.origin.x, legendFrame.origin.y + 4, legendFrame.size.width, legendFrame.size.height) withFont:[UIFont boldSystemFontOfSize:10.0] lineBreakMode:UILineBreakModeClip alignment:UITextAlignmentCenter];
 		[[UIColor darkGrayColor] set];
-		NSString *legendString = [NSString stringWithFormat:@"%@%%  (%i %@)", percentString, (int)revenue, [[CurrencyManager sharedManager] baseCurrencyDescription]];
+
+
+		NSString *legendString = [NSString stringWithFormat:@"%@%%  (%@)", percentString, [[CurrencyManager sharedManager] baseCurrencyDescriptionForAmount:[NSNumber numberWithFloat:revenue] withFraction:NO]];
 		[legendString drawInRect:CGRectMake(205, y + 3, 110, 10) withFont:[UIFont boldSystemFontOfSize:11.0] lineBreakMode:UILineBreakModeClip alignment:UITextAlignmentLeft];
 		i++;
 	}

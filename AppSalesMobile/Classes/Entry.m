@@ -103,7 +103,7 @@
 		NSString *totalRevenueString = [numberFormatter stringFromNumber:[NSNumber numberWithFloat:[self totalRevenueInBaseCurrency]]];
 		NSString *royaltiesSumString = [numberFormatter stringFromNumber:[NSNumber numberWithFloat:self.royalties * self.units]];
 		
-		return [NSString stringWithFormat:@"%@ : %i × %@ %@ = %@ %@ ≈ %@ %@", self.productName, self.units, royaltiesString, self.currency, royaltiesSumString, self.currency, totalRevenueString, [[CurrencyManager sharedManager] baseCurrencyDescription]];
+		return [NSString stringWithFormat:@"%@ : %i × %@ %@ = %@ %@ ≈ %@", self.productName, self.units, royaltiesString, self.currency, royaltiesSumString, self.currency, [[CurrencyManager sharedManager] baseCurrencyDescriptionForAmount:totalRevenueString]];
 	}
 	else {
 		return [NSString stringWithFormat:NSLocalizedString(@"%@ : %i free downloads",nil), self.productName, self.units];

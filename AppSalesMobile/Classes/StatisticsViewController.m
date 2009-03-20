@@ -179,6 +179,7 @@
 	
 	UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Quick Selection",nil) message:@"" delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel",nil) otherButtonTitles:nil] autorelease];
 	[alert addButtonWithTitle:NSLocalizedString(@"Last 7 Days",nil)];
+	[alert addButtonWithTitle:NSLocalizedString(@"Last 30 Days",nil)];
 	for (NSString *monthButton in months) {
 		[alert addButtonWithTitle:monthButton];
 	}
@@ -204,6 +205,12 @@
 		if (fromIndex < 0) fromIndex = 0;
 	}
 	else if (buttonIndex == 2) {
+		//Last 7 days
+		toIndex = [self.days count] - 1;
+		fromIndex = [self.days count] - 30;
+		if (fromIndex < 0) fromIndex = 0;
+	}
+	else if (buttonIndex == 3) {
 		//NSLog(@"This month");
 		fromIndex = [self.days count] - 1;
 		toIndex = fromIndex;
@@ -227,7 +234,7 @@
 			lastMonth = month;
 		}
 	}
-	else if (buttonIndex == 3) {
+	else if (buttonIndex == 4) {
 		//NSLog(@"Last month");
 		fromIndex = [self.days count] - 1;
 		toIndex = fromIndex;
@@ -256,7 +263,7 @@
 			i--;
 		}
 	}
-	else if (buttonIndex == 4) {
+	else if (buttonIndex == 5) {
 		//NSLog(@"Two months ago");
 		fromIndex = [self.days count] - 1;
 		toIndex = fromIndex;
@@ -285,7 +292,7 @@
 			i--;
 		}
 	}
-	else if (buttonIndex == 5) {
+	else if (buttonIndex == 6) {
 		//NSLog(@"Three months ago");
 		fromIndex = [self.days count] - 1;
 		toIndex = fromIndex;

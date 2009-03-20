@@ -79,7 +79,7 @@
 	[[UIColor darkGrayColor] set];
 	NSString *caption = [NSString stringWithFormat:NSLocalizedString(@"Revenue (in %@)",nil), [[CurrencyManager sharedManager] baseCurrencyDescription]];
 	[caption drawInRect:CGRectMake(10, 10, 300, 20) withFont:[UIFont boldSystemFontOfSize:12.0] lineBreakMode:UILineBreakModeCharacterWrap alignment:UITextAlignmentCenter];
-	NSString *subtitle = [NSString stringWithFormat:NSLocalizedString(@"%i days, ∑ = %i %@",nil), [revenues count], (int)totalRevenue, [[CurrencyManager sharedManager] baseCurrencyDescription]];
+	NSString *subtitle = [NSString stringWithFormat:NSLocalizedString(@"%i days, ∑ = %@",nil), [revenues count], [[CurrencyManager sharedManager] baseCurrencyDescriptionForAmount:[NSNumber numberWithFloat:totalRevenue] withFraction:YES]];
 	[subtitle drawInRect:CGRectMake(10, maxY + 5, 300, 20) withFont:[UIFont boldSystemFontOfSize:12.0] lineBreakMode:UILineBreakModeCharacterWrap alignment:UITextAlignmentCenter];
 	
 	NSString *appName = (self.app != nil) ? (self.app) : NSLocalizedString(@"All Apps",nil);

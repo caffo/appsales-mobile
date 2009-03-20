@@ -48,6 +48,7 @@
 + (CurrencyManager *)sharedManager;
 - (NSString *)baseCurrencyDescription;
 - (NSString *)baseCurrencyDescriptionForAmount:(NSString *)amount;
+- (NSString *)baseCurrencyDescriptionForAmount:(NSNumber *)amount withFraction:(BOOL)withFraction;
 - (void)forceRefresh;
 - (void)refreshIfNeeded;
 - (void)refreshExchangeRates;

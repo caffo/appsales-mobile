@@ -152,6 +152,21 @@
 	}
 }
 
+- (NSString *)baseCurrencyDescriptionForAmount:(NSNumber *)amount withFraction:(BOOL)withFraction
+{
+	NSUInteger fractionDigits = 2;
+	if (! withFraction)
+	{
+		fractionDigits = 0;
+	}
+	NSNumberFormatter *numberFormatter = [[NSNumberFormatter new] autorelease];
+	[numberFormatter setMinimumFractionDigits:fractionDigits];
+	[numberFormatter setMaximumFractionDigits:fractionDigits];
+	[numberFormatter setMinimumIntegerDigits:1];
+	NSString *formattedAmount = [numberFormatter stringFromNumber:amount];
+	return [self baseCurrencyDescriptionForAmount:formattedAmount];
+}
+
 - (void)refreshIfNeeded
 {
 	if (!isRefreshing && ([[NSDate date] timeIntervalSinceDate:self.lastRefresh] > 21600)) { 
